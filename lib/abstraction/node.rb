@@ -52,6 +52,11 @@ end
 # Generator node, creates new pulses and sends received pulses to the next
 # level of abstraction
 class Generator < SingleNode
+  def initialize(id)
+    super(id)
+    @wait = 4
+  end
+
   def send_pulse
     generate_pulse
     if !@pulses.empty?
@@ -62,10 +67,17 @@ class Generator < SingleNode
   end
 
   def generate_pulse
-    puts "Generating new pulse"
-    @out_conn.receive_pulse(Pulse.new) unless @out_conn.nil?
-    puts "Pulse sent to #{out_conn.id}"
-    nil
+    if @wait == 4
+      puts "Generating new pulse"
+      @out_conn.receive_pulse(Pulse.new) unless @out_conn.nil?
+      puts "Pulse sent to #{out_conn.id}"
+      @wait = 0
+      nil
+    else
+      puts "No pulse generated"
+      puts "---"
+    end
+    @wait += 1
   end
 
 end
@@ -110,6 +122,11 @@ end
 
 # Switcher, sends single pulses to different connections in turn
 class Switcher < MultiNode
+  def initialize(id)
+    super(id)
+    @switch = 0
+  end
+
   def send_pulse
     if !@pulses.empty?
       pulse = aggregate_pulses(@pulses)
@@ -124,7 +141,6 @@ class Switcher < MultiNode
   end
 
   def next_switch
-    @switch = 0
     @switch = (@switch + 1) % @switch_length
   end
 

@@ -7,9 +7,9 @@ grid = Grid.new(5,5)
 
 grid.grid[0][0] = Generator.new(grid.id)
 grid.grid[0][2] = Amplifier.new(grid.id)
-grid.grid[1][2] = Splitter.new(grid.id)
-grid.grid[2][2] = Switcher.new(grid.id)
-
+grid.grid[2][2] = Splitter.new(grid.id)
+grid.grid[1][1] = Switcher.new(grid.id)
+grid.grid[4][2] = Splitter.new(grid.id)
 grid.set_neighbors
 
 grid.create_connection(0, 0, :E)
@@ -17,12 +17,15 @@ grid.create_connection(1, 0, :E)
 grid.create_connection(2, 0, :S)
 grid.create_connection(2, 1, :S)
 grid.create_connection(2, 1, :W)
-grid.create_connection(2, 2, :S)
 grid.create_connection(1, 1, :S)
-grid.create_connection(2, 2, :E)
 grid.create_connection(1, 1, :W)
 grid.create_connection(0, 1, :N)
-
+grid.create_connection(2, 2, :S)
+grid.create_connection(2, 2, :E)
+grid.create_connection(2, 3, :S)
+grid.create_connection(4, 2, :S)
+grid.create_connection(4, 2, :W)
+grid.create_connection(3, 2, :W)
 def pp_grid(grid)
   grid.grid_iterator.each do |node|
     puts "Node: #{node.id}, #{node.class}"
@@ -41,8 +44,26 @@ def pp_grid(grid)
   end
 end
 
+def pp_visual_grid(grid)
+  i = 0
+  grid.grid_iterator.each do |node|
+    if i == 5
+      i = 0
+      puts
+    end
+    if !node.pulses.empty?
+      print " x "
+    else
+      print " o "
+    end
+    i += 1
+  end
+end
 20.times do
-  pp_grid(grid)
+  gets
+#  pp_grid(grid)
+  pp_visual_grid(grid)
+  puts
   puts "Grid Received: #{grid.step}"
 end
 #class Game < Chingu::Window
