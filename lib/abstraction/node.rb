@@ -1,7 +1,9 @@
+OPPOSITE_NODES = { :N => :S, :S => :N, :E => :W, :W => :E }
+
 # Base Node class
 class Node
 
-  attr_accessor :neighbors, :id, :out_conn, :pulses
+  attr_accessor :neighbors, :id, :out_conn, :pulses, :connections
 
   include PulseEngine
 
@@ -9,6 +11,7 @@ class Node
     @id = id
     @neighbors = {:N=>nil, :S=>nil, :E=>nil, :W=>nil}
     @out_conn = nil
+    @connections = { :N=>0, :S=>0, :E=>0, :W=>0 }
     @pulses = []
     @pulse_buffer = []
   end
@@ -30,13 +33,20 @@ class MultiNode < Node
 
   # Connect a neighbor
   def connect(direction)
+    inverse = OPPOSITE_NODES[direction]
     @out_conn ||= {:N=>0, :S=>0, :E=>0, :W=>0}
-    @out_conn[direction] = 1
+    if !@neighbors[direction.nil?]
+      @out_conn[direction] = 1
+      @connections[direction] = 1
+      @neighbors[direction].connections[inverse] = 1
+    end
   end
 
   # Disconnect a neighbor
   def disconnect(direction)
+    inverse = OPPOSITE_NODES[direction]
     @out_conn[direction] = 0
+    @neighbors[direction].connections[inverse] = 0
   end
 end
 
@@ -45,16 +55,22 @@ class SingleNode < Node
 
   # Only allow one connection at a time for basic nodes
   def connect(direction)
-    @out_conn = @neighbors[direction]
+    inverse = OPPOSITE_NODES[direction]
+    if !@neighbors[direction].nil?
+      @out_conn = @neighbors[direction]
+      @connections[direction] = 1
+      @neighbors[direction].connections[inverse] = 1
+    end
   end
 end
 
 # Generator node, creates new pulses and sends received pulses to the next
 # level of abstraction
 class Generator < SingleNode
-  def initialize(id)
+  def initialize(id, delay = 10)
     super(id)
-    @wait = 4
+    @delay = delay
+    @wait = delay
   end
 
   def send_pulse
@@ -67,15 +83,15 @@ class Generator < SingleNode
   end
 
   def generate_pulse
-    if @wait == 4
+    if @wait == @delay
       puts "Generating new pulse"
       @out_conn.receive_pulse(Pulse.new) unless @out_conn.nil?
       puts "Pulse sent to #{out_conn.id}"
       @wait = 0
       nil
     else
-      puts "No pulse generated"
-      puts "---"
+      puts 
+      puts 
     end
     @wait += 1
   end
@@ -88,10 +104,10 @@ class Splitter < MultiNode
     if !@pulses.empty?
       pulse = aggregate_pulses(@pulses)
 
-      connections ||= @out_conn.select{ |key, value| key if value == 1 }
-      connections.each do |key, value|
-        split_pulse = pulse.amplitude / connections.length if connections.length > 1
-        @neighbors[key].receive_pulse(Pulse.new(split_pulse))
+      outbounds ||= @out_conn.select{ |key, value| key if value == 1 }
+      split_pulse = pulse.amplitude / outbounds.length if outbounds.length > 0
+      outbounds.each do |key, value|
+        @neighbors[key].receive_pulse(Pulse.new(split_pulse)) 
       end
     end
     nil
@@ -143,7 +159,6 @@ class Switcher < MultiNode
   def next_switch
     @switch = (@switch + 1) % @switch_length
   end
-
 end
 
 # Basic, passes pulses on to next node
@@ -151,7 +166,6 @@ class Basic < SingleNode
   def send_pulse
     if !@pulses.empty?
       pulse = aggregate_pulses(@pulses)
-
       @out_conn.receive_pulse(Pulse.new(pulse.amplitude)) unless @out_conn.nil?
     end
     nil

@@ -3,13 +3,63 @@
 $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__),".." , "lib")))
 require 'abstraction'
 
+# Node printouts
+# 0000
+NODE = " \u00B7 "
+# 1000
+NNODE = " \u2575 "
+NCHARGENODE = " \u2579 "
+# 0100
+SNODE = " \u2577 "
+SCHARGENODE = " \u257B "
+# 0010
+ENODE = " \u2576 "
+ECHARGENODE = " \u257A "
+# 0001
+WNODE = " \u2574 "
+WCHARGENODE = " \u2578 "
+# 1001
+NWNODE = " \u2518 "
+NWCHARGENODE = " \u251B "
+# 0101
+SWNODE =  " \u2510 "
+SWCHARGENODE = " \u2513 "
+# 1010
+NENODE = " \u2514 "
+NECHARGENODE = " \u2517 "
+# 1100
+NSNODE = " \u2502 "
+NSCHARGENODE = " \u2503 "
+# 0110
+SENODE = " \u250C "
+SECHARGENODE = " \u250F "
+# 0011
+EWNODE = " \u2500 "
+EWCHARGENODE = " \u2501 "
+# 0111
+SEWNODE = " \u252C "
+SEWCHARGENODE = " \u2533 "
+# 1101
+NSWNODE = " \u2524 "
+NSWCHARGENODE = " \u252B "
+# 1110
+NSENODE = " \u251C "
+NSECHARGENODE = " \u2523 "
+# 1011
+NEWNODE = " \u2534 "
+NEWCHARGENODE = " \u253B "
+# 1101
+NSEWNODE = " \u253C "
+NSEWCHARGENODE = " \u254B "
+
 grid = Grid.new(5,5)
 
 grid.grid[0][0] = Generator.new(grid.id)
 grid.grid[0][2] = Amplifier.new(grid.id)
+grid.grid[1][1] = Splitter.new(grid.id)
 grid.grid[2][2] = Splitter.new(grid.id)
-grid.grid[1][1] = Switcher.new(grid.id)
-grid.grid[4][2] = Splitter.new(grid.id)
+grid.grid[1][2] = Switcher.new(grid.id)
+grid.grid[3][2] = Splitter.new(grid.id)
 grid.set_neighbors
 
 grid.create_connection(0, 0, :E)
@@ -23,9 +73,17 @@ grid.create_connection(0, 1, :N)
 grid.create_connection(2, 2, :S)
 grid.create_connection(2, 2, :E)
 grid.create_connection(2, 3, :S)
-grid.create_connection(4, 2, :S)
-grid.create_connection(4, 2, :W)
-grid.create_connection(3, 2, :W)
+grid.create_connection(3, 2, :S)
+grid.create_connection(2, 3, :W)
+grid.create_connection(1, 3, :W)
+grid.create_connection(0, 3, :N)
+grid.create_connection(0, 2, :N)
+grid.create_connection(1, 2, :S)
+grid.create_connection(3, 4, :W)
+grid.create_connection(3, 3, :S)
+grid.create_connection(2, 4, :W)
+grid.create_connection(1, 4, :N)
+
 def pp_grid(grid)
   grid.grid_iterator.each do |node|
     puts "Node: #{node.id}, #{node.class}"
@@ -44,6 +102,82 @@ def pp_grid(grid)
   end
 end
 
+def node_print(node, charge)
+  connections = node.connections.values.join
+  if !charge
+    case connections
+    when "0000"
+      NODE
+    when "0001"
+      WNODE
+    when "0010"
+      ENODE
+    when "0100"
+      SNODE
+    when "1000"
+      NNODE
+    when "1100"
+      NSNODE
+    when "0110"
+      SENODE
+    when "0011"
+      EWNODE
+    when "1001"
+      NWNODE
+    when "1010"
+      NENODE
+    when "0101"
+      SWNODE
+    when "1110"
+      NSENODE
+    when "0111"
+      SEWNODE
+    when "1011"
+      NEWNODE
+    when "1101"
+      NSWNODE
+    when "1111"
+      NSEWNODE
+    end
+  else
+    case connections
+    when "0000"
+      NODE
+    when "0001"
+      WCHARGENODE
+    when "0010"
+      ECHARGENODE
+    when "0100"
+      SCHARGENODE
+    when "1000"
+      NCHARGENODE
+    when "1100"
+      NSCHARGENODE
+    when "0110"
+      SECHARGENODE
+    when "0011"
+      EWCHARGENODE
+    when "1001"
+      NWCHARGENODE
+    when "1010"
+      NECHARGENODE
+    when "0101"
+      SWCHARGENODE
+    when "1110"
+      NSECHARGENODE
+    when "0111"
+      SEWCHARGENODE
+    when "1011"
+      NEWCHARGENODE
+    when "1101"
+      NSWCHARGENODE
+    when "1111"
+      NSEWCHARGENODE
+    end
+
+  end
+end
+
 def pp_visual_grid(grid)
   i = 0
   grid.grid_iterator.each do |node|
@@ -52,39 +186,46 @@ def pp_visual_grid(grid)
       puts
     end
     if !node.pulses.empty?
-      print " x "
+      print node_print(node, true)
     else
-      print " o "
+      print node_print(node, false)
     end
     i += 1
   end
 end
-20.times do
+loop do
   gets
 #  pp_grid(grid)
   pp_visual_grid(grid)
   puts
-  puts "Grid Received: #{grid.step}"
+  shot = grid.step.pop
+  shot = shot.amplitude if !shot.nil?
+  if shot.nil?
+    puts
+  else
+    puts "Grid fires shot doing #{shot} damage!"
+  end
 end
-#class Game < Chingu::Window
-#  def initialize
-#    super(1280, 720, false)
-#    push_game_state(Play)
-#  end
-#end
-#
-#class Play < Chingu::GameState
-#  def initialize
-#    super
-#  end
-#  def draw
-#    super
-#  end
-#  def update
-#    super
-#    $window.caption = "FPS: #{$window.fps}"
-#  end
-#end
-#
-#Game.new.show
-#
+
+class Game < Chingu::Window
+  def initialize
+    super(1280, 720, false)
+    push_game_state(Play)
+  end
+end
+
+class Play < Chingu::GameState
+  def initialize
+    super
+  end
+  def draw
+    super
+  end
+  def update
+    super
+    $window.caption = "FPS: #{$window.fps}"
+  end
+end
+
+Game.new.show
+
