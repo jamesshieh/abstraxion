@@ -5,6 +5,7 @@ GEM
       crack
       gosu (>= 0.7.25)
       rest-client
+    colorize (0.5.8)
     crack (0.3.1)
     gosu (0.7.45)
     mime-types (1.19)
@@ -16,3 +17,5 @@ PLATFORMS
 
 DEPENDENCIES
   chingu
+  colorize
+  gosu

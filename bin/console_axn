@@ -181,17 +181,17 @@ def pp_visual_grid(grid)
       puts
     end
     if !node.pulses.empty?
-      print node_print(node, true).blue
+      print node_print(node, true).red
     else
       case node.class.to_s
       when "Basic"
         print node_print(node, false).white
       when "Generator"
-        print node_print(node, false).blue
+        print node_print(node, false).red
       when "Splitter"
         print node_print(node, false).green
       when "Switcher"
-        print node_print(node, false).red
+        print node_print(node, false).blue
       when "Amplifier"
         print node_print(node, false).yellow
       end
