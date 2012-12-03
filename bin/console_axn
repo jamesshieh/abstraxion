@@ -2,6 +2,7 @@
 
 $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__),".." , "lib")))
 require 'abstraction'
+require 'colorize'
 
 # Node printouts
 # 0000
@@ -52,6 +53,9 @@ NEWCHARGENODE = " \u253B "
 NSEWNODE = " \u253C "
 NSEWCHARGENODE = " \u254B "
 
+
+# Manual test grid creation
+
 grid = Grid.new(5,5)
 
 grid.grid[0][0] = Generator.new(grid.id)
@@ -60,6 +64,7 @@ grid.grid[1][1] = Splitter.new(grid.id)
 grid.grid[2][2] = Splitter.new(grid.id)
 grid.grid[1][2] = Switcher.new(grid.id)
 grid.grid[3][2] = Splitter.new(grid.id)
+grid.grid[3][3] = Switcher.new(grid.id)
 grid.set_neighbors
 
 grid.create_connection(0, 0, :E)
@@ -83,24 +88,14 @@ grid.create_connection(3, 4, :W)
 grid.create_connection(3, 3, :S)
 grid.create_connection(2, 4, :W)
 grid.create_connection(1, 4, :N)
+grid.create_connection(3, 3, :E)
+grid.create_connection(4, 3, :N)
+grid.create_connection(4, 2, :N)
+grid.create_connection(4, 1, :N)
+grid.create_connection(4, 0, :W)
+grid.create_connection(3, 0, :W)
 
-def pp_grid(grid)
-  grid.grid_iterator.each do |node|
-    puts "Node: #{node.id}, #{node.class}"
-    puts "Pulses: #{node.pulses}"
-    if node.class.superclass == SingleNode
-      puts "Connections: #{node.out_conn.id if !node.out_conn.nil?}"
-    elsif node.class.superclass == MultiNode
-      neighbors = node.out_conn.select{ |key, value| key if value == 1 }
-      print "Connections: "
-      neighbors.each do |key, value|
-        print "#{node.neighbors[key].id} "
-      end
-      puts
-    end
-    puts "----"
-  end
-end
+# Grid printing functions
 
 def node_print(node, charge)
   connections = node.connections.values.join
@@ -186,16 +181,28 @@ def pp_visual_grid(grid)
       puts
     end
     if !node.pulses.empty?
-      print node_print(node, true)
+      print node_print(node, true).blue
     else
-      print node_print(node, false)
+      case node.class.to_s
+      when "Basic"
+        print node_print(node, false).white
+      when "Generator"
+        print node_print(node, false).blue
+      when "Splitter"
+        print node_print(node, false).green
+      when "Switcher"
+        print node_print(node, false).red
+      when "Amplifier"
+        print node_print(node, false).yellow
+      end
     end
     i += 1
   end
 end
+
+# Console loop
 loop do
   gets
-#  pp_grid(grid)
   pp_visual_grid(grid)
   puts
   shot = grid.step.pop
@@ -206,26 +213,3 @@ loop do
     puts "Grid fires shot doing #{shot} damage!"
   end
 end
-
-class Game < Chingu::Window
-  def initialize
-    super(1280, 720, false)
-    push_game_state(Play)
-  end
-end
-
-class Play < Chingu::GameState
-  def initialize
-    super
-  end
-  def draw
-    super
-  end
-  def update
-    super
-    $window.caption = "FPS: #{$window.fps}"
-  end
-end
-
-Game.new.show
-

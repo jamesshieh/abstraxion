@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__),".." , "lib")))
+require 'abstraction'
+
+class Game < Chingu::Window
+  def initialize
+    super(1280, 720, false)
+    push_game_state(Play)
+  end
+end
+
+class Play < Chingu::GameState
+  def initialize
+    super
+  end
+  def draw
+    super
+  end
+  def update
+    super
+    $window.caption = "FPS: #{$window.fps}"
+  end
+end
+
+Game.new.show
+
