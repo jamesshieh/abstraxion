@@ -3,9 +3,12 @@
 $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__),".." , "lib")))
 require 'abstraction'
 
+NODE_SIZE = 100
+
 class Game < Chingu::Window
   def initialize
-    super(1280, 720, false)
+    super(NODE_SIZE * 5, NODE_SIZE * 5, false)
+    $grid = Grid.new(5, 5)    
     push_game_state(Play)
   end
 end
@@ -14,14 +17,56 @@ class Play < Chingu::GameState
   def initialize
     super
   end
+
+  def draw_grid
+    $grid.grid_iterator.each_with_index do |node, i|
+      case node.class.to_sym
+      when :Basic
+        draw_node_basic(i % $grid.y, i / $grid.y, node.connections)
+      when :Generator
+      when :Amplifier
+      when :Splitter
+      when :Switcher
+      end
+    end
+  end
+
+  def draw_node_basic(x, y)
+    $window.fill_rect([x*NODE_SIZE, y*NODE_SIZE, NODE_SIZE, NODE_SIZE], Color::WHITE, 0)
+  end
+  
   def draw
     super
+    draw_grid
   end
   def update
     super
     $window.caption = "FPS: #{$window.fps}"
   end
 end
+
+class Basic < GameObject
+  def initialize
+    @image
+  end
+end
+
+class Generator < GameObject
+
+end
+
+class Amplifier < GameObject
+
+end
+
+class Splitter < GameObject
+
+end
+
+class Switcher < GameObject
+
+end
+
 
 Game.new.show
 

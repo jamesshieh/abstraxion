@@ -1,9 +1,9 @@
 class Grid
-  attr_accessor :grid, :grid_iterator
+  attr_accessor :grid, :grid_iterator, :x, :y
   def initialize(x, y)
     @x, @y = x, y
-    @id = 0
     @pulses = []
+    @id ||= id
     @grid ||= generate_grid
     @grid_iterator = Enumerator.new do |x|
       @grid.each do |row|
@@ -14,20 +14,26 @@ class Grid
     end
   end
 
+  def id
+    Fiber.new do
+      id = 0
+      loop do
+        Fiber.yield id
+        id += 1
+      end
+    end
+  end
+
   def generate_grid
     grid = []
     @y.times do
       row = []
       @x.times do
-        row << Basic.new(id)
+        row << Basic.new(@id.resume)
       end
       grid << row
     end
     grid
-  end
-
-  def id
-    @id += 1
   end
 
   def set_neighbors
