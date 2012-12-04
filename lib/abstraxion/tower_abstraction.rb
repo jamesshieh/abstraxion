@@ -36,6 +36,7 @@ module TowerAbxn
         end
         grid << row
       end
+      set_neighbors
       grid
     end
 
@@ -59,7 +60,7 @@ module TowerAbxn
       @grid[y][x].disconnect(direction)
     end
 
-    def step
+    def update
       @grid_iterator.each do |node|
         pulse = node.send_pulse
         @pulses << pulse if !pulse.nil?

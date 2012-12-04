@@ -1,4 +1,4 @@
-module MapLevel
+module MapAbxn
 
   class Generator
     def initialize(delay, tower)
@@ -37,7 +37,7 @@ module MapLevel
     end
 
     def update
-      @pulses << @grid.step
+      @pulses << @grid.update
       @pulses.pop if !@pulses.empty?
     end
   end
