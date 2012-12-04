@@ -8,7 +8,7 @@ NODE_SIZE = 100
 class Game < Chingu::Window
   def initialize
     super(NODE_SIZE * 5, NODE_SIZE * 5, false)
-    $grid = Grid.new(5, 5)    
+    $grid = Grid.new(5, 5)
     push_game_state(Play)
   end
 end
@@ -20,21 +20,21 @@ class Play < Chingu::GameState
 
   def draw_grid
     $grid.grid_iterator.each_with_index do |node, i|
-      case node.class.to_sym
-      when :Basic
+      case node
+      when GridLevel::Basic
         draw_node_basic(i % $grid.y, i / $grid.y, node.connections)
-      when :Generator
-      when :Amplifier
-      when :Splitter
-      when :Switcher
+      when GridLevel::Generator
+      when GridLevel::Amplifier
+      when GridLevel::Splitter
+      when GridLevel::Switcher
       end
     end
   end
 
-  def draw_node_basic(x, y)
+  def draw_node_basic(x, y, connections)
     $window.fill_rect([x*NODE_SIZE, y*NODE_SIZE, NODE_SIZE, NODE_SIZE], Color::WHITE, 0)
   end
-  
+
   def draw
     super
     draw_grid

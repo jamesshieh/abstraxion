@@ -58,13 +58,13 @@ NSEWCHARGENODE = "\u254B"
 
 grid = Grid.new(5,5)
 
-grid.grid[0][0] = Generator.new(grid.id)
-grid.grid[0][2] = Amplifier.new(grid.id)
-grid.grid[1][1] = Splitter.new(grid.id)
-grid.grid[2][2] = Splitter.new(grid.id)
-grid.grid[1][2] = Switcher.new(grid.id)
-grid.grid[3][2] = Splitter.new(grid.id)
-grid.grid[3][3] = Switcher.new(grid.id)
+grid.grid[0][0] = GridLevel::Generator.new(grid.id)
+grid.grid[0][2] = GridLevel::Amplifier.new(grid.id)
+grid.grid[1][1] = GridLevel::Splitter.new(grid.id)
+grid.grid[2][2] = GridLevel::Splitter.new(grid.id)
+grid.grid[1][2] = GridLevel::Switcher.new(grid.id)
+grid.grid[3][2] = GridLevel::Splitter.new(grid.id)
+grid.grid[3][3] = GridLevel::Switcher.new(grid.id)
 grid.set_neighbors
 
 grid.create_connection(0, 0, :E)
@@ -183,16 +183,16 @@ def pp_visual_grid(grid)
     if !node.pulses.empty?
       print node_print(node, true).red
     else
-      case node.class.to_s
-      when "Basic"
+      case node
+      when Tower::Basic
         print node_print(node, false).white
-      when "Generator"
+      when Tower::Generator
         print node_print(node, false).red
-      when "Splitter"
+      when Tower::Splitter
         print node_print(node, false).green
-      when "Switcher"
+      when Tower::Switcher
         print node_print(node, false).blue
-      when "Amplifier"
+      when Tower::Amplifier
         print node_print(node, false).yellow
       end
     end

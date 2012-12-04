@@ -16,14 +16,7 @@ module TowerLevel
     end
 
     def create_node(x, y, type)
-      case type
-      when :originator
-        @grid[y][x] = GridLevel::Originator.new(id)
-      when :splitter
-      when :switcher
-      when :amplifier
-      when :basic
-      end
+      @grid[y][x] = GridLevel::Node.new(id)
     end
 
     def id
