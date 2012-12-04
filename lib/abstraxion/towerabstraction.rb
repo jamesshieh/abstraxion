@@ -1,10 +1,9 @@
-module TowerLevel
+module TowerAbxn
   class Grid
     attr_accessor :grid, :grid_iterator, :x, :y
     def initialize(x, y)
       @x, @y = x, y
       @pulses = []
-      @id ||= id
       @grid ||= generate_grid
       @grid_iterator = Enumerator.new do |x|
         @grid.each do |row|
@@ -13,10 +12,6 @@ module TowerLevel
           end
         end
       end
-    end
-
-    def create_node(x, y, type)
-      @grid[y][x] = GridLevel::Node.new(id)
     end
 
     def id
@@ -34,7 +29,7 @@ module TowerLevel
       @y.times do
         row = []
         @x.times do
-          row << GridLevel::Basic.new(@id.resume)
+          row << GridLevel::Node.new(id.resume)
         end
         grid << row
       end

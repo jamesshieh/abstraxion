@@ -1,6 +1,6 @@
 OPPOSITE_NODES = { :N => :S, :S => :N, :E => :W, :W => :E }
 
-module GridLevel
+module GridAbxn
   # Base Node class
   class Node
 
