@@ -1,6 +1,73 @@
-OPPOSITE_NODES = { :N => :S, :S => :N, :E => :W, :W => :E }
+module TowerAbxn
+  
+  OPPOSITE_NODES = { :N => :S, :S => :N, :E => :W, :W => :E }
+  
+  class Grid
+    attr_accessor :grid, :grid_iterator, :x, :y
+    def initialize(x, y)
+      @x, @y = x, y
+      @pulses = []
+      @grid ||= generate_grid
+      @grid_iterator = Enumerator.new do |x|
+        @grid.each do |row|
+          row.each do |col|
+            x << col
+          end
+        end
+      end
+    end
 
-module GridAbxn
+    def id
+      Fiber.new do
+        id = 0
+        loop do
+          Fiber.yield id
+          id += 1
+        end
+      end
+    end
+
+    def generate_grid
+      grid = []
+      @y.times do
+        row = []
+        @x.times do
+          row << Node.new(id.resume)
+        end
+        grid << row
+      end
+      grid
+    end
+
+    def set_neighbors
+      for i in (0..@x-1)
+        for j in (0..@y-1)
+          n = @grid[j][i].neighbors
+          n[:N] = @grid[j-1][i] if j > 0
+          n[:S] = @grid[j+1][i] if j < @y - 1
+          n[:E] = @grid[j][i+1] if i < @x - 1
+          n[:W] = @grid[j][i-1] if i > 0
+        end
+      end
+    end
+
+    def create_connection(x, y, direction)
+      @grid[y][x].connect(direction)
+    end
+
+    def remove_connection(x, y, direction)
+      @grid[y][x].disconnect(direction)
+    end
+
+    def step
+      @grid_iterator.each do |node|
+        pulse = node.send_pulse
+        @pulses << pulse if !pulse.nil?
+      end
+      @pulses
+    end
+  end
+
   # Base Node class
   class Node
 
@@ -10,6 +77,7 @@ module GridAbxn
 
     def initialize(id)
       @id = id
+      @nodeabxn #TODO: do something
       @neighbors = {:N=>nil, :S=>nil, :E=>nil, :W=>nil}
       @out_conn = nil
       @connections = { :N=>0, :S=>0, :E=>0, :W=>0 }
@@ -27,6 +95,11 @@ module GridAbxn
       @pulse_buffer << pulse
     end
 
+    def send_pulse
+      clear_buffer
+      pulse = aggregate_pulses(@pulses)
+      #TODO: do something
+    end
   end
 
   # Multiple outbound connection Node superclass
@@ -73,7 +146,7 @@ module GridAbxn
       super(id)
       @zero_pulse = nil
     end
-    
+
     def generator_receive_pulse(pulse)
       @zero_pulse = pulse
     end
@@ -90,79 +163,4 @@ module GridAbxn
       end
     end
   end
-
-  # Splitter, splits a single pulse into multiple weaker pulses
-  class Splitter < MultiNode
-    def send_pulse
-      if !@pulses.empty?
-        pulse = aggregate_pulses(@pulses)
-
-        outbounds ||= @out_conn.select{ |key, value| key if value == 1 }
-        split_pulse = pulse.amplitude / outbounds.length if outbounds.length > 0
-        outbounds.each do |key, value|
-          @neighbors[key].receive_pulse(Pulse.new(split_pulse)) 
-        end
-      end
-      nil
-    end
-  end
-
-  # Amplifier, multiples the amplitude of received pulses
-  class Amplifier < SingleNode
-    def initialize(id)
-      super(id)
-      @multiplier = 1.5
-    end
-
-    def set_multiplier(value)
-      @multiplier = (value)
-    end
-
-    def send_pulse
-      if !@pulses.empty?
-        pulse = aggregate_pulses(@pulses)
-        amplified = pulse.amplitude * @multiplier
-
-        @out_conn.receive_pulse(Pulse.new(amplified)) unless @out_conn.nil?
-      end
-      nil
-    end
-  end
-
-  # Switcher, sends single pulses to different connections in turn
-  class Switcher < MultiNode
-    def initialize(id)
-      super(id)
-      @switch = 0
-    end
-
-    def send_pulse
-      if !@pulses.empty?
-        pulse = aggregate_pulses(@pulses)
-
-        connections ||= @out_conn.select{ |key, value| key if value == 1 }
-        @switch_length ||= connections.length
-        target = connections.keys[next_switch]
-
-        @neighbors[target].receive_pulse(Pulse.new(pulse.amplitude)) unless connections.empty?
-      end
-      nil
-    end
-
-    def next_switch
-      @switch = (@switch + 1) % @switch_length
-    end
-  end
-
-  # Basic, passes pulses on to next node
-  class Basic < SingleNode
-    def send_pulse
-      if !@pulses.empty?
-        pulse = aggregate_pulses(@pulses)
-        @out_conn.receive_pulse(Pulse.new(pulse.amplitude)) unless @out_conn.nil?
-      end
-      nil
-    end
-  end
-
 end
