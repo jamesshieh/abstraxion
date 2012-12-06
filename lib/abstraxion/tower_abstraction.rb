@@ -7,7 +7,9 @@ module TowerAbxn
     def initialize(x, y)
       @x, @y = x, y
       @pulses = []
+      @originator = Originator.new
       @grid ||= generate_grid
+      @grid[0][0] = @originator
       @grid_iterator = Enumerator.new do |x|
         @grid.each do |row|
           row.each do |col|
@@ -60,6 +62,10 @@ module TowerAbxn
       @grid[y][x].disconnect(direction)
     end
 
+    def pulse(pulse)
+      @originator.generator_receive_pulse(pulse)
+    end
+
     def update
       @grid_iterator.each do |node|
         pulse = node.send_pulse
@@ -78,7 +84,7 @@ module TowerAbxn
 
     def initialize(id)
       @id = id
-      @nodeabxn = NodeAbxn::Grid.new(3,3) #TODO: this must inherit properties from the node class that was created
+      @nodeabxn = NodeAbxn::Molecule.new #TODO: this must inherit properties from the node class that was created
       @neighbors = {:N=>nil, :S=>nil, :E=>nil, :W=>nil}
       @out_conn = nil
       @connections = { :N=>0, :S=>0, :E=>0, :W=>0 }
@@ -99,18 +105,28 @@ module TowerAbxn
     # Process a pulse and send it on to neighbors
     def send_pulse
       clear_buffer
-      pulse = aggregate_pulses(@pulses)
-      #TODO: Must process pulse according to the inherited node.
-      #TODO: design a scheme that can abstract behavior out of node
-      #configurations
+      if !@pulses.empty?
+        pulse = aggregate_pulses(@pulses)
+        instruct = @nodeabxn.send_and_receive_pulse(pulse)
+        instruct.each do |key, value|
+          @neighbors[key].receive_pulse(value) if !value.nil?
+        end
+      end
     end
 
+    # TODO: Temporary set type for node
+    def set_type(type)
+      @nodeabxn.type = type
+    end
+
+    def type
+      @nodeabxn.type
+    end
     # Connect a neighbor
     def connect(direction)
       inverse = OPPOSITE_NODES[direction]
-      @out_conn ||= {:N=>0, :S=>0, :E=>0, :W=>0}
       if !@neighbors[direction.nil?]
-        @out_conn[direction] = 1
+        @nodeabxn.conn[direction] = 1
         @connections[direction] = 1
         @neighbors[direction].connections[inverse] = 1
       end
@@ -119,7 +135,7 @@ module TowerAbxn
     # Disconnect a neighbor
     def disconnect(direction)
       inverse = OPPOSITE_NODES[direction]
-      @out_conn[direction] = 0
+      @nodeabxn.conn[direction] = 0
       @neighbors[direction].connections[inverse] = 0
     end
   end
@@ -133,10 +149,16 @@ module TowerAbxn
       @zero_pulse = nil
     end
 
+    # Receive a pulse from the generator outside of tower level abstraction
     def generator_receive_pulse(pulse)
       @zero_pulse = pulse
     end
 
+    def type
+      :originator
+    end
+
+    # Send pulses to neighbors and out of system back to tower
     def send_pulse
       if !@zero_pulse.nil?
         @out_conn.receive_pulse(@zero_pulse)

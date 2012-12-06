@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__),".." , "lib")))
-require 'abstraction'
+require 'abstraxion'
 require 'colorize'
 
 # Node printouts
@@ -56,52 +56,89 @@ NSEWCHARGENODE = "\u254B"
 
 # Manual test map creation
 class Map
-  include MapAbxn
-  include TowerAbxn
-  include NodeAbxn
+  attr_accessor :tower, :generator
   def initialize
     @tower = MapAbxn::Tower.new(5,5)
+    @tower.grid[0][2].set_type(:amplifier)
+    @tower.grid[1][1].set_type(:splitter)
+    @tower.grid[2][2].set_type(:splitter)
+    @tower.grid[1][2].set_type(:switcher)
+    @tower.grid[3][2].set_type(:splitter)
+    @tower.grid[3][3].set_type(:switcher)
+    @tower.set_neighbors
+    @tower.grid.create_connection(0, 0, :E)
+    @tower.grid.create_connection(1, 0, :E)
+    @tower.grid.create_connection(2, 0, :S)
+    @tower.grid.create_connection(2, 1, :S)
+    @tower.grid.create_connection(2, 1, :W)
+    @tower.grid.create_connection(1, 1, :S)
+    @tower.grid.create_connection(1, 1, :W)
+    @tower.grid.create_connection(0, 1, :N)
+    @tower.grid.create_connection(2, 2, :S)
+    @tower.grid.create_connection(2, 2, :E)
+    @tower.grid.create_connection(2, 3, :S)
+    @tower.grid.create_connection(3, 2, :S)
+    @tower.grid.create_connection(2, 3, :W)
+    @tower.grid.create_connection(1, 3, :W)
+    @tower.grid.create_connection(0, 3, :N)
+    @tower.grid.create_connection(0, 2, :N)
+    @tower.grid.create_connection(1, 2, :S)
+    @tower.grid.create_connection(3, 4, :W)
+    @tower.grid.create_connection(3, 3, :S)
+    @tower.grid.create_connection(2, 4, :W)
+    @tower.grid.create_connection(1, 4, :N)
+    @tower.grid.create_connection(3, 3, :E)
+    @tower.grid.create_connection(4, 3, :N)
+    @tower.grid.create_connection(4, 2, :N)
+    @tower.grid.create_connection(4, 1, :N)
+    @tower.grid.create_connection(4, 0, :W)
+    @tower.grid.create_connection(3, 0, :W)
+
     @generator = MapAbxn::Generator.new(7, @tower)
+  end
+  def update
+    @tower.update
+    @generator.update
   end
 end
 
 
-grid.grid[0][0] = TowerAbxn::Originator.new(grid.id)
-#grid.grid[0][2] = TowerAbxn::Amplifier.new(grid.id)
-#grid.grid[1][1] = TowerAbxn::Splitter.new(grid.id)
-#grid.grid[2][2] = TowerAbxn::Splitter.new(grid.id)
-#grid.grid[1][2] = TowerAbxn::Switcher.new(grid.id)
-#grid.grid[3][2] = TowerAbxn::Splitter.new(grid.id)
-#grid.grid[3][3] = TowerAbxn::Switcher.new(grid.id)
-grid.set_neighbors
-
-grid.create_connection(0, 0, :E)
-grid.create_connection(1, 0, :E)
-grid.create_connection(2, 0, :S)
-grid.create_connection(2, 1, :S)
-grid.create_connection(2, 1, :W)
-grid.create_connection(1, 1, :S)
-grid.create_connection(1, 1, :W)
-grid.create_connection(0, 1, :N)
-grid.create_connection(2, 2, :S)
-grid.create_connection(2, 2, :E)
-grid.create_connection(2, 3, :S)
-grid.create_connection(3, 2, :S)
-grid.create_connection(2, 3, :W)
-grid.create_connection(1, 3, :W)
-grid.create_connection(0, 3, :N)
-grid.create_connection(0, 2, :N)
-grid.create_connection(1, 2, :S)
-grid.create_connection(3, 4, :W)
-grid.create_connection(3, 3, :S)
-grid.create_connection(2, 4, :W)
-grid.create_connection(1, 4, :N)
-grid.create_connection(3, 3, :E)
-grid.create_connection(4, 3, :N)
-grid.create_connection(4, 2, :N)
-grid.create_connection(4, 1, :N)
-grid.create_connection(4, 0, :W)
-grid.create_connection(3, 0, :W)
+#@tower.grid[0][0] = TowerAbxn::Originator.new(grid.id)
+#@tower.grid[0][2] = TowerAbxn::Amplifier.new(grid.id)
+#@tower.grid[1][1] = TowerAbxn::Splitter.new(grid.id)
+#@tower.grid[2][2] = TowerAbxn::Splitter.new(grid.id)
+#@tower.grid[1][2] = TowerAbxn::Switcher.new(grid.id)
+#@tower.grid[3][2] = TowerAbxn::Splitter.new(grid.id)
+#@tower.grid[3][3] = TowerAbxn::Switcher.new(grid.id)
+#@tower.set_neighbors
+#
+#grid.create_connection(0, 0, :E)
+#grid.create_connection(1, 0, :E)
+#grid.create_connection(2, 0, :S)
+#grid.create_connection(2, 1, :S)
+#grid.create_connection(2, 1, :W)
+#grid.create_connection(1, 1, :S)
+#grid.create_connection(1, 1, :W)
+#grid.create_connection(0, 1, :N)
+#grid.create_connection(2, 2, :S)
+#grid.create_connection(2, 2, :E)
+#grid.create_connection(2, 3, :S)
+#grid.create_connection(3, 2, :S)
+#grid.create_connection(2, 3, :W)
+#grid.create_connection(1, 3, :W)
+#grid.create_connection(0, 3, :N)
+#grid.create_connection(0, 2, :N)
+#grid.create_connection(1, 2, :S)
+#grid.create_connection(3, 4, :W)
+#grid.create_connection(3, 3, :S)
+#grid.create_connection(2, 4, :W)
+#grid.create_connection(1, 4, :N)
+#grid.create_connection(3, 3, :E)
+#grid.create_connection(4, 3, :N)
+#grid.create_connection(4, 2, :N)
+#grid.create_connection(4, 1, :N)
+#grid.create_connection(4, 0, :W)
+#grid.create_connection(3, 0, :W)
 
 # Grid printing functions
 
@@ -191,16 +228,16 @@ def pp_visual_grid(grid)
     if !node.pulses.empty?
       print node_print(node, true).red
     else
-      case node
-      when Tower::Basic
-        print node_print(node, false).white
-      when Tower::Generator
+      case node.type
+      when :originator
         print node_print(node, false).red
-      when Tower::Splitter
+      when :basic
+        print node_print(node, false).white
+      when :splitter
         print node_print(node, false).green
-      when Tower::Switcher
+      when :switcher
         print node_print(node, false).blue
-      when Tower::Amplifier
+      when :amplifier
         print node_print(node, false).yellow
       end
     end
@@ -209,15 +246,10 @@ def pp_visual_grid(grid)
 end
 
 # Console loop
+map = Map.new
 loop do
   gets
-  pp_visual_grid(grid)
+  pp_visual_grid(map.tower.grid)
   puts
-  shot = grid.step.pop
-  shot = shot.amplitude if !shot.nil?
-  if shot.nil?
-    puts
-  else
-    puts "Grid fires shot doing #{shot} damage!"
-  end
+  map.update
 end

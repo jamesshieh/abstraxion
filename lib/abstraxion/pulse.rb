@@ -8,6 +8,10 @@ module PulseEngine
     end
   end
 
+  def amplify(magnitude)
+    @amplitude = @amplitude * magnitude
+  end
+
   def aggregate_pulses(pulses)
     amplitude = 0
     amplitude += pulses.pop.amplitude until pulses.empty?
