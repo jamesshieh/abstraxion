@@ -3,7 +3,7 @@ module MapAbxn
   class Generator
     def initialize(delay, tower)
       @delay = delay
-      @tower = tower # temporary debug
+      @tower = tower # temporary pointer to tower before wiring is enabled on the map level
     end
 
     def generate_pulse
@@ -27,6 +27,7 @@ module MapAbxn
   end
 
   class Tower
+    attr_accessor :grid, :pulses
     def initialize(x, y)
       @grid = TowerLevel::Grid.new(x, y)
       @pulses = []
@@ -37,8 +38,11 @@ module MapAbxn
     end
 
     def update
-      @pulses << @grid.update
-      @pulses.pop if !@pulses.empty?
+      Fiber.new do
+        loop do
+          Fiber.yield @grid.update
+        end
+      end
     end
   end
 

@@ -54,17 +54,25 @@ NSEWNODE = "\u253C"
 NSEWCHARGENODE = "\u254B"
 
 
-# Manual test grid creation
+# Manual test map creation
+class Map
+  include MapAbxn
+  include TowerAbxn
+  include NodeAbxn
+  def initialize
+    @tower = MapAbxn::Tower.new(5,5)
+    @generator = MapAbxn::Generator.new(7, @tower)
+  end
+end
 
-grid = Grid.new(5,5)
 
-grid.grid[0][0] = GridLevel::Generator.new(grid.id)
-grid.grid[0][2] = GridLevel::Amplifier.new(grid.id)
-grid.grid[1][1] = GridLevel::Splitter.new(grid.id)
-grid.grid[2][2] = GridLevel::Splitter.new(grid.id)
-grid.grid[1][2] = GridLevel::Switcher.new(grid.id)
-grid.grid[3][2] = GridLevel::Splitter.new(grid.id)
-grid.grid[3][3] = GridLevel::Switcher.new(grid.id)
+grid.grid[0][0] = TowerAbxn::Originator.new(grid.id)
+#grid.grid[0][2] = TowerAbxn::Amplifier.new(grid.id)
+#grid.grid[1][1] = TowerAbxn::Splitter.new(grid.id)
+#grid.grid[2][2] = TowerAbxn::Splitter.new(grid.id)
+#grid.grid[1][2] = TowerAbxn::Switcher.new(grid.id)
+#grid.grid[3][2] = TowerAbxn::Splitter.new(grid.id)
+#grid.grid[3][3] = TowerAbxn::Switcher.new(grid.id)
 grid.set_neighbors
 
 grid.create_connection(0, 0, :E)

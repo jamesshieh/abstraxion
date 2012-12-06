@@ -1,7 +1,7 @@
 module TowerAbxn
-  
+
   OPPOSITE_NODES = { :N => :S, :S => :N, :E => :W, :W => :E }
-  
+
   class Grid
     attr_accessor :grid, :grid_iterator, :x, :y
     def initialize(x, y)
@@ -78,7 +78,7 @@ module TowerAbxn
 
     def initialize(id)
       @id = id
-      @nodeabxn #TODO: do something
+      @nodeabxn = NodeAbxn::Grid.new(3,3) #TODO: this must inherit properties from the node class that was created
       @neighbors = {:N=>nil, :S=>nil, :E=>nil, :W=>nil}
       @out_conn = nil
       @connections = { :N=>0, :S=>0, :E=>0, :W=>0 }
@@ -96,15 +96,14 @@ module TowerAbxn
       @pulse_buffer << pulse
     end
 
+    # Process a pulse and send it on to neighbors
     def send_pulse
       clear_buffer
       pulse = aggregate_pulses(@pulses)
-      #TODO: do something
+      #TODO: Must process pulse according to the inherited node.
+      #TODO: design a scheme that can abstract behavior out of node
+      #configurations
     end
-  end
-
-  # Multiple outbound connection Node superclass
-  class MultiNode < Node
 
     # Connect a neighbor
     def connect(direction)
@@ -125,24 +124,10 @@ module TowerAbxn
     end
   end
 
-  # Single outbound connection Node superclass
-  class SingleNode < Node
-
-    # Only allow one connection at a time for basic nodes
-    def connect(direction)
-      inverse = OPPOSITE_NODES[direction]
-      if !@neighbors[direction].nil?
-        @out_conn.connections[inverse] = 0 if !@out_conn.nil?
-        @out_conn = @neighbors[direction]
-        @connections[direction] = 1
-        @neighbors[direction].connections[inverse] = 1
-      end
-    end
-  end
-
   # Generator node, creates new pulses and sends received pulses to the next
   # level of abstraction
-  class Originiator < SingleNode
+  # NOTE: pre-abstracted node that cannot be edited from inside? acts as origin
+  class Originiator < Node
     def initialize(id)
       super(id)
       @zero_pulse = nil
