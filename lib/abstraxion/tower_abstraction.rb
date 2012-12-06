@@ -1,3 +1,4 @@
+require_relative 'pulse'
 module TowerAbxn
 
   OPPOSITE_NODES = { :N => :S, :S => :N, :E => :W, :W => :E }
@@ -7,7 +8,7 @@ module TowerAbxn
     def initialize(x, y)
       @x, @y = x, y
       @pulses = []
-      @originator = Originator.new
+      @originator = Originator.new(id.resume)
       @grid ||= generate_grid
       @grid[0][0] = @originator
       @grid_iterator = Enumerator.new do |x|
@@ -38,7 +39,6 @@ module TowerAbxn
         end
         grid << row
       end
-      set_neighbors
       grid
     end
 
@@ -78,7 +78,7 @@ module TowerAbxn
   # Base Node class
   class Node
 
-    attr_accessor :neighbors, :id, :out_conn, :pulses, :connections
+    attr_accessor :neighbors, :id, :out_conn, :pulses, :connections, :pulse_buffer
 
     include PulseEngine
 
@@ -112,6 +112,7 @@ module TowerAbxn
           @neighbors[key].receive_pulse(value) if !value.nil?
         end
       end
+      nil
     end
 
     # TODO: Temporary set type for node
@@ -143,7 +144,7 @@ module TowerAbxn
   # Generator node, creates new pulses and sends received pulses to the next
   # level of abstraction
   # NOTE: pre-abstracted node that cannot be edited from inside? acts as origin
-  class Originiator < Node
+  class Originator < Node
     def initialize(id)
       super(id)
       @zero_pulse = nil
@@ -161,7 +162,8 @@ module TowerAbxn
     # Send pulses to neighbors and out of system back to tower
     def send_pulse
       if !@zero_pulse.nil?
-        @out_conn.receive_pulse(@zero_pulse)
+        conn =  @nodeabxn.conn.keys[0]
+        @neighbors[conn].receive_pulse(@zero_pulse)
         @zero_pulse = nil
       end
       if !@pulses.empty?

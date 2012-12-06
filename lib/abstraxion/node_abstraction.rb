@@ -25,6 +25,7 @@ module NodeAbxn
       when :basic
         outbound[connections[0]] = pulse
       end unless connections.empty?
+      outbound
     end
   end
   class Atom

@@ -1,3 +1,4 @@
+require_relative 'tower_abstraction'
 module MapAbxn
 
   class Generator
@@ -7,7 +8,7 @@ module MapAbxn
     end
 
     def generate_pulse
-      Fiber.new do
+      @gen ||= Fiber.new do
         wait = 0
         loop do
           if wait == @delay
@@ -29,7 +30,7 @@ module MapAbxn
   class Tower
     attr_accessor :grid, :pulses
     def initialize(x, y)
-      @grid = TowerLevel::Grid.new(x, y)
+      @grid = TowerAbxn::Grid.new(x, y)
       @pulses = []
     end
 
@@ -37,12 +38,15 @@ module MapAbxn
       @grid.pulse(pulse)
     end
 
-    def update
-      Fiber.new do
+    def step
+      @step ||= Fiber.new do
         loop do
           Fiber.yield @grid.update
         end
       end
+    end
+    def update
+      step.resume
     end
   end
 

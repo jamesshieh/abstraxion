@@ -6,11 +6,12 @@ module PulseEngine
     def initialize(amplitude = 1.0)
       @amplitude = amplitude
     end
+    def amplify(magnitude)
+      @amplitude = @amplitude * magnitude
+      self
+    end
   end
 
-  def amplify(magnitude)
-    @amplitude = @amplitude * magnitude
-  end
 
   def aggregate_pulses(pulses)
     amplitude = 0
