@@ -1,4 +1,4 @@
-Abstraxion v0.1
+Abstraxion v0.2
 ===============
 
 Abstraxion is a game based around the concept of abstraction.
@@ -7,7 +7,6 @@ Abstraxion is a game based around the concept of abstraction.
 
     bundle install
     bin/console_axn   # for console printing tester
-    bin/abstraxion    # for gosu/chingu client
 
 ### Console Abstraxion
 
