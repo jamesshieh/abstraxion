@@ -1,4 +1,3 @@
-require_relative 'pulse'
 module TowerAbxn
 
   OPPOSITE_NODES = { :N => :S, :S => :N, :E => :W, :W => :E }
@@ -8,9 +7,10 @@ module TowerAbxn
     def initialize(x, y)
       @x, @y = x, y
       @pulses = []
-      @originator = Originator.new(id.resume)
+      @id ||= id
+      @originator = Originator.new(@id.resume)
       @grid ||= generate_grid
-      @grid[0][0] = @originator
+      @grid[0][0] = @originator # NOTE: Temp setting
       @grid_iterator = Enumerator.new do |x|
         @grid.each do |row|
           row.each do |col|
@@ -35,7 +35,7 @@ module TowerAbxn
       @y.times do
         row = []
         @x.times do
-          row << Node.new(id.resume)
+          row << Node.new(@id.resume)
         end
         grid << row
       end
@@ -71,6 +71,9 @@ module TowerAbxn
         pulse = node.send_pulse
         @pulses << pulse if !pulse.nil?
       end
+      @grid_iterator.each do |node|
+        node.clear_buffer
+      end
       @pulses
     end
   end
@@ -78,7 +81,7 @@ module TowerAbxn
   # Base Node class
   class Node
 
-    attr_accessor :neighbors, :id, :out_conn, :pulses, :connections, :pulse_buffer
+    attr_accessor :neighbors, :id, :pulses, :connections, :pulse_buffer
 
     include PulseEngine
 
@@ -86,7 +89,6 @@ module TowerAbxn
       @id = id
       @nodeabxn = NodeAbxn::Molecule.new #TODO: this must inherit properties from the node class that was created
       @neighbors = {:N=>nil, :S=>nil, :E=>nil, :W=>nil}
-      @out_conn = nil
       @connections = { :N=>0, :S=>0, :E=>0, :W=>0 }
       @pulses = []
       @pulse_buffer = []
@@ -104,12 +106,11 @@ module TowerAbxn
 
     # Process a pulse and send it on to neighbors
     def send_pulse
-      clear_buffer
       if !@pulses.empty?
         pulse = aggregate_pulses(@pulses)
         instruct = @nodeabxn.send_and_receive_pulse(pulse)
         instruct.each do |key, value|
-          @neighbors[key].receive_pulse(value) if !value.nil?
+          @neighbors[key].receive_pulse(value)
         end
       end
       nil
@@ -126,7 +127,7 @@ module TowerAbxn
     # Connect a neighbor
     def connect(direction)
       inverse = OPPOSITE_NODES[direction]
-      if !@neighbors[direction.nil?]
+      if !@neighbors[direction].nil?
         @nodeabxn.conn[direction] = 1
         @connections[direction] = 1
         @neighbors[direction].connections[inverse] = 1
@@ -137,6 +138,7 @@ module TowerAbxn
     def disconnect(direction)
       inverse = OPPOSITE_NODES[direction]
       @nodeabxn.conn[direction] = 0
+      @connections[direction] = 0
       @neighbors[direction].connections[inverse] = 0
     end
   end

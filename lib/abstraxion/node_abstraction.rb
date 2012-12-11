@@ -1,7 +1,7 @@
 module NodeAbxn
   class Molecule
     attr_accessor :type, :conn
-    def initialize(type = :basic, conn = {})
+    def initialize(conn = {},type = :basic)
       @type = type # TODO: Temporary skip for this level of abx
       @conn = conn # TODO: Temporary skip for this level of abx
     end
@@ -10,21 +10,27 @@ module NodeAbxn
       outbound = {}
       connections = []
       @conn.each { |k, v| connections << k if v == 1 }
-      case type
-      when :amplifier
-        connections.each do |x|
-          outbound[x] = pulse.amplify(1.5)
+      if !connections.empty?
+        case type
+        when :amplifier
+          puts "Amplifying..."
+          connections.each do |x|
+            outbound[x] = pulse.amplify(1.5)
+          end
+        when :splitter
+          puts "Splitting..."
+          connections.each do |x|
+            outbound[x] = PulseEngine::Pulse.new(pulse.amplitude/connections.length)
+          end
+        when :switcher
+          puts "Switching..."
+          @switch ||= (0..connections.length-1).cycle
+          outbound[connections[@switch.next]] = pulse
+        when :basic
+          puts "Pulsing..."
+          outbound[connections[0]] = pulse
         end
-      when :splitter
-        connections.each do |x|
-          outbound[x] = pulse.amplify(1/connections.length)
-        end
-      when :switcher
-        @switch ||= (0..connections.length-1).cycle
-        outbound[connections[@switch.next]] = pulse
-      when :basic
-        outbound[connections[0]] = pulse
-      end unless connections.empty?
+      end
       outbound
     end
   end

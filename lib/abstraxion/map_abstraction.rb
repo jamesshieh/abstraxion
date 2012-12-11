@@ -1,4 +1,3 @@
-require_relative 'tower_abstraction'
 module MapAbxn
 
   class Generator
@@ -12,6 +11,7 @@ module MapAbxn
         wait = 0
         loop do
           if wait == @delay
+            wait = 0
             Fiber.yield PulseEngine::Pulse.new
           else
             wait += 1
@@ -38,15 +38,8 @@ module MapAbxn
       @grid.pulse(pulse)
     end
 
-    def step
-      @step ||= Fiber.new do
-        loop do
-          Fiber.yield @grid.update
-        end
-      end
-    end
     def update
-      step.resume
+      @grid.update
     end
   end
 

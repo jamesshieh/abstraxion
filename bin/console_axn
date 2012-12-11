@@ -3,6 +3,7 @@
 $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__),".." , "lib")))
 require 'abstraxion'
 require 'colorize'
+require 'debugger'
 
 # Node printouts
 # 0000
@@ -56,16 +57,20 @@ NSEWCHARGENODE = "\u254B"
 
 # Manual test map creation
 class Map
+  include PulseEngine
+  include TowerAbxn
+  include MapAbxn
+  include NodeAbxn
   attr_accessor :tower, :generator
   def initialize
     @tower = MapAbxn::Tower.new(5,5)
-    @tower.grid[0][2].set_type(:amplifier)
-    @tower.grid[1][1].set_type(:splitter)
-    @tower.grid[2][2].set_type(:splitter)
-    @tower.grid[1][2].set_type(:switcher)
-    @tower.grid[3][2].set_type(:splitter)
-    @tower.grid[3][3].set_type(:switcher)
-    @tower.set_neighbors
+    @tower.grid.grid[0][2].set_type(:amplifier)
+    @tower.grid.grid[1][1].set_type(:splitter)
+    @tower.grid.grid[2][2].set_type(:splitter)
+    @tower.grid.grid[1][2].set_type(:switcher)
+    @tower.grid.grid[3][2].set_type(:splitter)
+    @tower.grid.grid[3][3].set_type(:switcher)
+    @tower.grid.set_neighbors
     @tower.grid.create_connection(0, 0, :E)
     @tower.grid.create_connection(1, 0, :E)
     @tower.grid.create_connection(2, 0, :S)
@@ -76,8 +81,8 @@ class Map
     @tower.grid.create_connection(0, 1, :N)
     @tower.grid.create_connection(2, 2, :S)
     @tower.grid.create_connection(2, 2, :E)
-    @tower.grid.create_connection(2, 3, :S)
     @tower.grid.create_connection(3, 2, :S)
+    @tower.grid.create_connection(2, 3, :S)
     @tower.grid.create_connection(2, 3, :W)
     @tower.grid.create_connection(1, 3, :W)
     @tower.grid.create_connection(0, 3, :N)
@@ -94,11 +99,12 @@ class Map
     @tower.grid.create_connection(4, 0, :W)
     @tower.grid.create_connection(3, 0, :W)
 
-    @generator = MapAbxn::Generator.new(7, @tower)
+    @generator = MapAbxn::Generator.new(10, @tower)
   end
+
   def update
-    @tower.update
     @generator.update
+    @tower.update
   end
 end
 
@@ -244,7 +250,6 @@ def pp_visual_grid(grid)
     i += 1
   end
 end
-
 # Console loop
 map = Map.new
 loop do
