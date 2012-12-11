@@ -1,8 +1,9 @@
 module MapAbxn
 
   class Generator
-    def initialize(delay, tower)
+    def initialize(delay, tower, hp = 1000)
       @delay = delay
+      @hp = hp
       @tower = tower # temporary pointer to tower before wiring is enabled on the map level
     end
 
@@ -21,6 +22,10 @@ module MapAbxn
       end
     end
 
+    def alive?
+      @hp > 0
+    end
+
     def update
       pulse = generate_pulse.resume
       @tower.pulse(pulse) if pulse
@@ -28,8 +33,9 @@ module MapAbxn
   end
 
   class Tower
-    attr_accessor :grid, :pulses
+    attr_accessor :grid, :pulses, :x, :y
     def initialize(x, y)
+      @x, @y = x, y
       @grid = TowerAbxn::Grid.new(x, y)
       @pulses = []
     end

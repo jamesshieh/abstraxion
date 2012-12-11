@@ -3,71 +3,126 @@
 $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__),".." , "lib")))
 require 'abstraxion'
 
-NODE_SIZE = 100
+NODE_SIZE = 20
+WINDOW_H = 450
+WINDOW_W = 800
+WHITE = Color::WHITE
+RED = Color::RED
+BLUE = Color::BLUE
+GREEN = Color::GREEN
+YELLOW = Color::YELLOW
+CYAN = Color::CYAN
 
 class Game < Chingu::Window
   def initialize
-    super(NODE_SIZE * 5, NODE_SIZE * 5, false)
+    $delay = 10
+    super(WINDOW_W, WINDOW_H, false)
     $tower = MapAbxn::Tower.new(5, 5)
-    $generator = MapAbxn::Generator.new(3, $tower)
+    $tower.grid.grid[0][2].set_type(:amplifier)
+    $tower.grid.grid[1][1].set_type(:splitter)
+    $tower.grid.grid[2][2].set_type(:splitter)
+    $tower.grid.grid[1][2].set_type(:switcher)
+    $tower.grid.grid[3][2].set_type(:splitter)
+    $tower.grid.grid[3][3].set_type(:switcher)
+    $tower.grid.set_neighbors
+    $tower.grid.create_connection(0, 0, :E)
+    $tower.grid.create_connection(1, 0, :E)
+    $tower.grid.create_connection(2, 0, :S)
+    $tower.grid.create_connection(2, 1, :S)
+    $tower.grid.create_connection(2, 1, :W)
+    $tower.grid.create_connection(1, 1, :S)
+    $tower.grid.create_connection(1, 1, :W)
+    $tower.grid.create_connection(0, 1, :N)
+    $tower.grid.create_connection(2, 2, :S)
+    $tower.grid.create_connection(2, 2, :E)
+    $tower.grid.create_connection(3, 2, :S)
+    $tower.grid.create_connection(2, 3, :S)
+    $tower.grid.create_connection(2, 3, :W)
+    $tower.grid.create_connection(1, 3, :W)
+    $tower.grid.create_connection(0, 3, :N)
+    $tower.grid.create_connection(0, 2, :N)
+    $tower.grid.create_connection(1, 2, :S)
+    $tower.grid.create_connection(3, 4, :W)
+    $tower.grid.create_connection(3, 3, :S)
+    $tower.grid.create_connection(2, 4, :W)
+    $tower.grid.create_connection(1, 4, :N)
+    $tower.grid.create_connection(3, 3, :E)
+    $tower.grid.create_connection(4, 3, :N)
+    $tower.grid.create_connection(4, 2, :N)
+    $tower.grid.create_connection(4, 1, :N)
+    $tower.grid.create_connection(4, 0, :W)
+    $tower.grid.create_connection(3, 0, :W)
+
+    $generator = MapAbxn::Generator.new(7, $tower)
     push_game_state(Play)
   end
 end
 
 class Play < Chingu::GameState
   def initialize
+    @pulse = []
     super
   end
 
-  def draw_grid
-    $grid.grid_iterator.each_with_index do |node, i|
-      case node
-      when GridLevel::Basic
-        draw_node_basic(i % $grid.y, i / $grid.y, node.connections)
-      when GridLevel::Generator
-      when GridLevel::Amplifier
-      when GridLevel::Splitter
-      when GridLevel::Switcher
+  def draw_tower
+    $tower.grid.grid_iterator.each_with_index do |node, i|
+      if !node.pulses.empty?
+        draw_node(i % $tower.y, i / $tower.y, node.connections, CYAN)
+      else
+        case node.type
+        when :basic
+          draw_node(i % $tower.y, i / $tower.y, node.connections, WHITE)
+        when :originator
+          draw_node(i % $tower.y, i / $tower.y, node.connections, RED)
+        when :amplifier
+          draw_node(i % $tower.y, i / $tower.y, node.connections, BLUE)
+        when :splitter
+          draw_node(i % $tower.y, i / $tower.y, node.connections, GREEN)
+        when :switcher
+          draw_node(i % $tower.y, i / $tower.y, node.connections, YELLOW)
+        end
       end
     end
   end
 
-  def draw_node_basic(x, y, connections)
-    $window.fill_rect([x*NODE_SIZE, y*NODE_SIZE, NODE_SIZE, NODE_SIZE], Color::WHITE, 0)
+  def draw_node(x, y, connections, color)
+    $window.fill_rect([x*NODE_SIZE, WINDOW_H / 2 - 0.5 * $tower.y * NODE_SIZE + y*NODE_SIZE, NODE_SIZE, NODE_SIZE], color, 0)
+  end
+
+  def draw_pulses
+    if !@pulse.empty?
+      shot = @pulse.pop
+      Pulse.create(shot, :x => NODE_SIZE * $tower.x, :y => WINDOW_H / 2)
+    end
   end
 
   def draw
     super
-    draw_grid
+    draw_tower
+    draw_pulses
   end
   def update
     super
+    if $delay == 10
+      $generator.update
+      @pulse = $tower.update
+      $delay = 0
+    else
+      $delay += 1
+    end
     $window.caption = "FPS: #{$window.fps}"
   end
 end
 
-class Basic < GameObject
-  def initialize
-    @image
+class Pulse < GameObject
+  def initialize(pulse, options = {})
+    @pulse = pulse
+    super(options.merge(:image=>Image["pulse.png"]))
+  end
+  def update
+    @x += 5
   end
 end
-
-class Generator < GameObject
-
-end
-
-class Amplifier < GameObject
-
-end
-
-class Splitter < GameObject
-
-end
-
-class Switcher < GameObject
-
-end
-
 
 Game.new.show
 
