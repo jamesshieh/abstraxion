@@ -13,21 +13,17 @@ module NodeAbxn
       if !connections.empty?
         case type
         when :amplifier
-          puts "Amplifying..."
           connections.each do |x|
             outbound[x] = pulse.amplify(1.5)
           end
         when :splitter
-          puts "Splitting..."
           connections.each do |x|
             outbound[x] = PulseEngine::Pulse.new(pulse.amplitude/connections.length)
           end
         when :switcher
-          puts "Switching..."
           @switch ||= (0..connections.length-1).cycle
           outbound[connections[@switch.next]] = pulse
         when :basic
-          puts "Pulsing..."
           outbound[connections[0]] = pulse
         end
       end

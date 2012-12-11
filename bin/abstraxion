@@ -8,7 +8,8 @@ NODE_SIZE = 100
 class Game < Chingu::Window
   def initialize
     super(NODE_SIZE * 5, NODE_SIZE * 5, false)
-    $grid = Grid.new(5, 5)
+    $tower = MapAbxn::Tower.new(5, 5)
+    $generator = MapAbxn::Generator.new(3, $tower)
     push_game_state(Play)
   end
 end
