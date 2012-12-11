@@ -58,9 +58,9 @@ class Game < Chingu::Window
   end
 end
 
-class Play < Chingu::GameState
+class Master < Chingu::GameState
   def initialize
-    @pulse = []
+    Cursor.create(:x => $window.mouse_x, :y=>$window.mouse_y)
     super
   end
 
@@ -88,6 +88,52 @@ class Play < Chingu::GameState
   def draw_node(x, y, connections, color)
     $window.fill_rect([x*NODE_SIZE, WINDOW_H / 2 - 0.5 * $tower.y * NODE_SIZE + y*NODE_SIZE, NODE_SIZE, NODE_SIZE], color, 0)
   end
+end
+
+class Build < Master
+  def initialize
+    super
+    self.input = {  :escape => :exit,
+                    :space => Play,
+                    :left_mouse_button => :add_connection,
+                    :right_mouse_button => :edit_node_type
+    }
+  end
+
+  def add_connection
+  end
+  def edit_node_type
+    m_x, m_y = $window.mouse_x, $window.mouse_y
+    x = m_x/NODE_SIZE
+    y = (m_y -(WINDOW_H / 2 - 0.5 * $tower.y * NODE_SIZE))/NODE_SIZE
+    if (x > 0 || y > 0) && (x < $tower.x && y < $tower.y)
+      $tower.grid.grid[y][x].set_type(toggle_type.call)
+    end
+  end
+
+  def toggle_type
+    @types ||= [:basic, :amplifier, :splitter, :switcher]
+    return proc { @types.push(@types.shift)[0] }
+  end
+
+  def draw
+    super
+    draw_tower
+  end
+  def update
+    $window.caption = "Edit Mode"
+  end
+
+end
+
+class Play < Master
+  def initialize
+    @pulse = []
+    super
+    self.input = {  :escape => :exit,
+                    :space => Build
+    }
+  end
 
   def draw_pulses
     if !@pulse.empty?
@@ -112,8 +158,18 @@ class Play < Chingu::GameState
     end
     $window.caption = "FPS: #{$window.fps}"
   end
+
 end
 
+class Cursor < GameObject
+  def initialize(options = {})
+    super(options.merge(:image => Image["cursor.png"]))
+  end
+  def update
+    @x = $window.mouse_x
+    @y = $window.mouse_y
+  end
+end
 class Pulse < GameObject
   def initialize(pulse, options = {})
     @pulse = pulse
