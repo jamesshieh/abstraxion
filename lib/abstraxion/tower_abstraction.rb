@@ -18,6 +18,7 @@ module TowerAbxn
           end
         end
       end
+      set_neighbors
     end
 
     def id
@@ -54,12 +55,20 @@ module TowerAbxn
       end
     end
 
+    def connected?(x, y, direction)
+      @grid[y][x].connected?(direction)
+    end
+
     def create_connection(x, y, direction)
       @grid[y][x].connect(direction)
     end
 
     def remove_connection(x, y, direction)
       @grid[y][x].disconnect(direction)
+    end
+
+    def set_type(x, y, type)
+      @grid[y][x].set_type(type)
     end
 
     def pulse(pulse)
@@ -81,7 +90,7 @@ module TowerAbxn
   # Base Node class
   class Node
 
-    attr_accessor :neighbors, :id, :pulses, :connections, :pulse_buffer
+    attr_accessor :neighbors, :id, :pulses, :connections, :pulse_buffer, :nodeabxn
 
     include PulseEngine
 
@@ -92,6 +101,10 @@ module TowerAbxn
       @connections = { :N=>0, :S=>0, :E=>0, :W=>0 }
       @pulses = []
       @pulse_buffer = []
+    end
+
+    def connected?(direction)
+      @nodeabxn.conn[direction] == 1
     end
 
     # Dump the buffer into the active pulses
@@ -130,16 +143,19 @@ module TowerAbxn
       if !@neighbors[direction].nil?
         @nodeabxn.conn[direction] = 1
         @connections[direction] = 1
-        @neighbors[direction].connections[inverse] = 1
+        @neighbors[direction].connections[inverse] = 2 if @neighbors[direction].connections[inverse] == 0
       end
     end
 
     # Disconnect a neighbor
     def disconnect(direction)
       inverse = OPPOSITE_NODES[direction]
-      @nodeabxn.conn[direction] = 0
-      @connections[direction] = 0
-      @neighbors[direction].connections[inverse] = 0
+      if !@neighbors[direction].nil?
+        @nodeabxn.conn[direction] = 0
+        @connections[direction] = 0
+        @neighbors[direction].connections[inverse] = 0
+        @neighbors[direction].nodeabxn.conn[inverse] = 0
+      end
     end
   end
 
