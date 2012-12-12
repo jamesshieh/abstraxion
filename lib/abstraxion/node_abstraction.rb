@@ -8,10 +8,11 @@ module NodeAbxn
     def send_and_receive_pulse(pulse)
       # TODO: Temporary skips for this level of abx
       outbound = {}
-      connections = []
-      @conn.each { |k, v| connections << k if v == 1 }
+      connections = @conn.select { |_, v| v == 1 }.keys
       if !connections.empty?
         case type
+        when :originator
+          outbound[connections[0]] = pulse
         when :amplifier
           outbound[connections[0]] = pulse.amplify(1.5)
         when :splitter

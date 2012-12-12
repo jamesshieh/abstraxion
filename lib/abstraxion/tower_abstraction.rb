@@ -67,6 +67,10 @@ module TowerAbxn
       @grid[y][x].disconnect(direction)
     end
 
+    def get_type(x, y)
+      @grid[y][x].type
+    end
+
     def set_type(x, y, type)
       @grid[y][x].set_type(type)
     end
@@ -180,8 +184,10 @@ module TowerAbxn
     # Send pulses to neighbors and out of system back to tower
     def send_pulse
       if !@zero_pulse.nil?
-        conn =  @nodeabxn.conn.keys[0]
-        @neighbors[conn].receive_pulse(@zero_pulse)
+        instruct = @nodeabxn.send_and_receive_pulse(@zero_pulse)
+        instruct.each do |key, value|
+          @neighbors[key].receive_pulse(value)
+        end
         @zero_pulse = nil
       end
       if !@pulses.empty?
