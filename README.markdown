@@ -29,7 +29,7 @@ frameworks for the game. More details to come when an interface is built out.
 
 ### Currently working on:
 
-Visual node connections
-Node level abstraction
-Main map and playability
-Monsters and waves for core gameplay
+Visual node connections  
+Node level abstraction  
+Main map and playability  
+Monsters and waves for core gameplay  

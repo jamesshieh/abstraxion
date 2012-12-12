@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__),".." , "lib
 require 'abstraxion'
 
 ASSET_SIZE = 100
-NODE_SIZE = 50.0
+NODE_SIZE = 100
 WINDOW_H = 550
 WINDOW_W = 1000
 WHITE = Color::WHITE
@@ -129,10 +129,18 @@ end
 class Play < Master
   def initialize
     @pulse = []
+    @current_dps = 0
+    @dps = []
     super
     self.input = {  :escape => :exit,
                     :space => Build
     }
+  end
+
+  def dps(damage)
+    @dps << damage
+    @dps.shift if @dps.size > 60
+    @current_dps = @dps.inject(0.0) { |sum, el| sum + el } / (@dps.size/6)
   end
 
   def draw_pulses
@@ -148,14 +156,27 @@ class Play < Master
     if $delay == 10
       $generator.update
       @pulse = $tower.update
+      if !@pulse.empty?
+        dps(@pulse[0].amplitude)
+      else
+        dps(0)
+      end
       draw_charges
       draw_pulses
       $delay = 0
     else
       $delay += 1
     end
-    $window.caption = "FPS: #{$window.fps}"
+    $window.caption = "FPS: #{$window.fps}, DPS: #{@current_dps.round(3)}"
   end
+end
+
+class Mob < GameObject
+  def initialize(options = {})
+    @zorder = 40
+    super(options.merge(:image => Image["poring.png"]))
+  end
+
 end
 
 class Charge < GameObject
