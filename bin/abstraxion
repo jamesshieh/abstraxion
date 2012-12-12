@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__),".." , "lib
 require 'abstraxion'
 
 ASSET_SIZE = 100
-NODE_SIZE = 100
+NODE_SIZE = 100.0
 WINDOW_H = 550
 WINDOW_W = 1000
 WHITE = Color::WHITE
@@ -21,7 +21,7 @@ class Game < Chingu::Window
     $node_size = NODE_SIZE * $size
     $delay = 10
     super(WINDOW_W, WINDOW_H, false)
-    $tower = MapAbxn::Tower.new(5, 5)
+    $tower = MapAbxn::Tower.new(5,5)
     $generator = MapAbxn::Generator.new(7, $tower)
     push_game_state(Play)
   end
@@ -87,7 +87,7 @@ class Build < Master
 
   def setup
     scale = 1
-    $node_size = NODE_SIZE * scale
+    $node_size = NODE_SIZE.to_int * scale
     $size = FACTOR * scale
     super
   end
@@ -122,12 +122,27 @@ class Build < Master
     x = m_x/$node_size
     y = (m_y -(WINDOW_H / 2 - 0.5 * $tower.y * $node_size))/$node_size
     if (x > 0 || y > 0) && (x < $tower.x && y < $tower.y)
-      $tower.grid.set_type(x, y, toggle_type[$tower.grid.get_type(x,y)])
+      $tower.grid.set_type(x, y, @types[$tower.grid.get_type(x,y)])
     end
     draw_tower
   end
 
+  def draw_mouse_hover_connection
+    HoverConnector.destroy_all
+    m_x, m_y = $window.mouse_x, $window.mouse_y
+    x = (m_x/$node_size).to_int
+    y = (m_y -(WINDOW_H / 2 - 0.5 * $tower.y * $node_size)).to_int/$node_size
+    if x.between?(0,$tower.x-1) && y.between?(0,$tower.y-1)
+      direction = find_mouse_quadrant
+      draw_x = x*$node_size + $node_size/2
+      draw_y = WINDOW_H / 2 - 0.5 * $tower.y * $node_size + y*$node_size + $node_size/2
+      @angle ||= {:N => 0,:S => 180, :E => 90, :W => 270}
+      HoverConnector.create(:x => draw_x, :y => draw_y, :angle => @angle[direction], :factor_x => $size, :factor_y => $size)
+    end
+  end
+
   def update
+    draw_mouse_hover_connection
     $window.caption = "Edit Mode. FPS #{$window.fps}"
   end
 
@@ -146,9 +161,9 @@ class Play < Master
 
   def setup
     super
-    scale = 0.1
-    $size = FACTOR * 0.25
-    $node_size = NODE_SIZE * 0.25
+    scale = 0.5
+    $size = FACTOR * scale
+    $node_size = NODE_SIZE * scale
     draw_tower
   end
 
@@ -222,6 +237,13 @@ class OutConnector < GameObject
   end
 end
 
+class HoverConnector < GameObject
+  def initialize(options = {})
+    @zorder = 50
+    super(options.merge(:image => Image["hoverconnection.png"]))
+  end
+end
+
 class Cursor < GameObject
   def initialize(options = {})
     super(options.merge(:image => Image["cursor.png"]))
@@ -230,6 +252,13 @@ class Cursor < GameObject
   def update
     @x = $window.mouse_x + 6
     @y = $window.mouse_y + 10
+  end
+end
+
+class Generator < GameObject
+  def initialize(options = {})
+    @zorder = 50
+    super(options.merge(:image => Image["hoverconnection.png"]))
   end
 end
 
