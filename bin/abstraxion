@@ -1,72 +1,212 @@
 #!/usr/bin/env ruby
 
 $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__),".." , "lib")))
-require 'abstraction'
+require 'abstraxion'
 
-NODE_SIZE = 100
+ASSET_SIZE = 100
+NODE_SIZE = 50.0
+WINDOW_H = 550
+WINDOW_W = 1000
+WHITE = Color::WHITE
+RED = Color::RED
+BLUE = Color::BLUE
+GREEN = Color::GREEN
+YELLOW = Color::YELLOW
+CYAN = Color::CYAN
+FACTOR = NODE_SIZE/ASSET_SIZE
 
 class Game < Chingu::Window
   def initialize
-    super(NODE_SIZE * 5, NODE_SIZE * 5, false)
-    $grid = Grid.new(5, 5)    
+    $delay = 10
+    super(WINDOW_W, WINDOW_H, false)
+    $tower = MapAbxn::Tower.new(5, 5)
+    $generator = MapAbxn::Generator.new(7, $tower)
     push_game_state(Play)
   end
 end
 
-class Play < Chingu::GameState
+class Master < Chingu::GameState
   def initialize
+    @cursor = Cursor.create(:x => $window.mouse_x, :y=>$window.mouse_y)
     super
   end
+  def setup
+    draw_tower
+  end
 
-  def draw_grid
-    $grid.grid_iterator.each_with_index do |node, i|
-      case node.class.to_sym
-      when :Basic
-        draw_node_basic(i % $grid.y, i / $grid.y, node.connections)
-      when :Generator
-      when :Amplifier
-      when :Splitter
-      when :Switcher
-      end
+  def draw_charges
+    Charge.destroy_all
+    $tower.grid.grid_iterator.each_with_index do |node, i|
+      draw_charge(i % $tower.y, i / $tower.y) if !node.pulses.empty?
     end
   end
 
-  def draw_node_basic(x, y)
-    $window.fill_rect([x*NODE_SIZE, y*NODE_SIZE, NODE_SIZE, NODE_SIZE], Color::WHITE, 0)
+  def draw_charge(x, y)
+    draw_x = x*NODE_SIZE + NODE_SIZE/2
+    draw_y = WINDOW_H / 2 - 0.5 * $tower.y * NODE_SIZE + y*NODE_SIZE + NODE_SIZE/2
+    Charge.create(:x => draw_x, :y => draw_y, :factor_x => FACTOR, :factor_y => FACTOR)
   end
-  
-  def draw
+
+  def draw_tower
+    $tower.grid.grid_iterator.each_with_index do |node, i|
+      draw_node(i % $tower.y, i / $tower.y, node.connections, node.type)
+    end
+  end
+
+  def draw_node(x, y, connections, type)
+    draw_x = x*NODE_SIZE + NODE_SIZE/2
+    draw_y = WINDOW_H / 2 - 0.5 * $tower.y * NODE_SIZE + y*NODE_SIZE + NODE_SIZE/2
+    Node.create({:x => draw_x, :y => draw_y, :factor_x => FACTOR, :factor_y => FACTOR}, type)
+    n, s, e, w = connections.values
+    OutConnector.create(:x => draw_x, :y => draw_y,:angle => 0, :factor_x => FACTOR, :factor_y => FACTOR) if n == 1
+    OutConnector.create(:x => draw_x, :y => draw_y,:angle => 180, :factor_x => FACTOR, :factor_y => FACTOR) if s == 1
+    OutConnector.create(:x => draw_x, :y => draw_y,:angle => 90, :factor_x => FACTOR, :factor_y => FACTOR) if e == 1
+    OutConnector.create(:x => draw_x, :y => draw_y,:angle => 270, :factor_x => FACTOR, :factor_y => FACTOR) if w == 1
+    InConnector.create(:x => draw_x, :y => draw_y,:angle => 0, :factor_x => FACTOR, :factor_y => FACTOR) if n == 2
+    InConnector.create(:x => draw_x, :y => draw_y,:angle => 180, :factor_x => FACTOR, :factor_y => FACTOR) if s == 2
+    InConnector.create(:x => draw_x, :y => draw_y,:angle => 90, :factor_x => FACTOR, :factor_y => FACTOR) if e == 2
+    InConnector.create(:x => draw_x, :y => draw_y,:angle => 270, :factor_x => FACTOR, :factor_y => FACTOR) if w == 2
+  end
+end
+
+class Build < Master
+  def initialize
     super
-    draw_grid
+    self.input = {  :escape => :exit,
+                    :space => Play,
+                    :left_mouse_button => :toggle_connection,
+                    :right_mouse_button => :edit_node_type
+    }
   end
+
+  def setup
+    super
+    $window.caption = "Edit Mode"
+  end
+
+  def find_mouse_quadrant
+    m_x, m_y = $window.mouse_x, $window.mouse_y
+    x_offset = m_x % NODE_SIZE
+    y_offset = (m_y -(WINDOW_H / 2 - 0.5 * $tower.y * NODE_SIZE)) % NODE_SIZE
+    if y_offset > x_offset
+      (NODE_SIZE - y_offset) > x_offset ? :W : :S
+    else
+      (NODE_SIZE - y_offset) > x_offset ? :N : :E
+    end
+  end
+
+  def toggle_connection
+    m_x, m_y = $window.mouse_x, $window.mouse_y
+    x = (m_x/NODE_SIZE).to_int
+    y = (m_y -(WINDOW_H / 2 - 0.5 * $tower.y * NODE_SIZE)).to_int/NODE_SIZE
+    direction = find_mouse_quadrant
+    return unless x.between?(0, $tower.x-1) && y.between?(0, $tower.y-1)
+    if $tower.grid.connected?(x, y, direction)
+      $tower.grid.remove_connection(x, y, direction)
+    else
+      $tower.grid.create_connection(x, y, direction)
+    end
+    draw_tower
+  end
+
+  def edit_node_type
+    m_x, m_y = $window.mouse_x, $window.mouse_y
+    x = m_x/NODE_SIZE
+    y = (m_y -(WINDOW_H / 2 - 0.5 * $tower.y * NODE_SIZE))/NODE_SIZE
+    if (x > 0 || y > 0) && (x < $tower.x && y < $tower.y)
+      $tower.grid.set_type(x, y, toggle_type.call)
+    end
+    draw_tower
+  end
+
+  def toggle_type
+    @types ||= [:basic, :amplifier, :splitter, :switcher]
+    return proc { @types.push(@types.shift)[0] }
+  end
+
+end
+
+class Play < Master
+  def initialize
+    @pulse = []
+    super
+    self.input = {  :escape => :exit,
+                    :space => Build
+    }
+  end
+
+  def draw_pulses
+    if !@pulse.empty?
+      shot = @pulse.pop
+      puts "Pulse fired causing #{shot.amplitude} points of damage!"
+      Pulse.create(shot, :x => NODE_SIZE * $tower.x, :y => WINDOW_H / 2)
+    end
+  end
+
   def update
     super
+    if $delay == 10
+      $generator.update
+      @pulse = $tower.update
+      draw_charges
+      draw_pulses
+      $delay = 0
+    else
+      $delay += 1
+    end
     $window.caption = "FPS: #{$window.fps}"
   end
 end
 
-class Basic < GameObject
-  def initialize
-    @image
+class Charge < GameObject
+  def initialize(options = {})
+    @zorder = 20
+    super(options.merge(:image => Image["charge.png"]))
   end
 end
 
-class Generator < GameObject
-
+class Node < GameObject
+  def initialize(options = {}, type)
+    @zorder = 8
+    super(options.merge(:image => Image[type.to_s + ".png"]))
+  end
 end
 
-class Amplifier < GameObject
-
+class InConnector < GameObject
+  def initialize(options = {})
+    @zorder = 9
+    super(options.merge(:image => Image["inconnection.png"]))
+  end
 end
 
-class Splitter < GameObject
-
+class OutConnector < GameObject
+  def initialize(options = {})
+    @zorder = 9
+    super(options.merge(:image => Image["outconnection.png"]))
+  end
 end
 
-class Switcher < GameObject
-
+class Cursor < GameObject
+  def initialize(options = {})
+    super(options.merge(:image => Image["cursor.png"]))
+    @zorder = 500
+  end
+  def update
+    @x = $window.mouse_x + 6
+    @y = $window.mouse_y + 10
+  end
 end
 
+class Pulse < GameObject
+  def initialize(pulse, options = {})
+    @pulse = pulse
+    @zorder = 30
+    super(options.merge(:image=>Image["pulse.png"]))
+  end
+  def update
+    @x += 5
+  end
+end
 
 Game.new.show
 
