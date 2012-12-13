@@ -1,4 +1,5 @@
 module Abstraxion
+  # Building game state where the tower grid can be edited
   class Build < Master
     def initialize
       super
@@ -10,6 +11,7 @@ module Abstraxion
       }
     end
 
+    # Basic setup to draw the tower initially when the mode starts
     def setup
       scale = 1
       $node_size = NODE_SIZE.to_int * scale
@@ -17,6 +19,8 @@ module Abstraxion
       super
     end
 
+    # Returns the quadrant the mouse is in when hovering over a node in the
+    # tower
     def find_mouse_quadrant
       m_x, m_y = $window.mouse_x, $window.mouse_y
       x_offset = m_x % $node_size
@@ -28,6 +32,7 @@ module Abstraxion
       end
     end
 
+    # Adds/removes connections
     def toggle_connection
       m_x, m_y = $window.mouse_x, $window.mouse_y
       x = (m_x/$node_size).to_int
@@ -42,6 +47,7 @@ module Abstraxion
       draw_tower
     end
 
+    # Switches a node's type to the next type in the list
     def edit_node_type
       m_x, m_y = $window.mouse_x, $window.mouse_y
       x = m_x/$node_size
@@ -52,6 +58,7 @@ module Abstraxion
       draw_tower
     end
 
+    # Draws a light blue indicator for mouse-over when drawing new connections
     def draw_mouse_hover_connection
       HoverConnector.destroy_all
       m_x, m_y = $window.mouse_x, $window.mouse_y
@@ -66,6 +73,7 @@ module Abstraxion
       end
     end
 
+    # Updates ouse position and overlays
     def update
       draw_mouse_hover_connection
       $cursor.update

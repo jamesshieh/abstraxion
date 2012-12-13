@@ -22,12 +22,29 @@ module Abstraxion
       draw_tower
     end
 
+    # Iterate through grid and draw charges where they exist
+    def draw_charges
+      Charge.destroy_all
+      $tower.grid.grid_iterator.each_with_index do |node, i|
+        draw_charge(i % $tower.y, i / $tower.y) if !node.pulses.empty?
+      end
+    end
+
+    # Draws a charge in a specific node
+    def draw_charge(x, y)
+      draw_x = x*$node_size + $node_size/2
+      draw_y = WINDOW_H / 2 - 0.5 * $tower.y * $node_size + y*$node_size + $node_size/2
+      Charge.create(:x => draw_x, :y => draw_y, :factor_x => $size, :factor_y => $size)
+    end
+
+    # Calculates the DPS of the tower by taking the last 10 seconds of shots
     def dps(damage)
       @dps << damage
       @dps.shift if @dps.size > 60
       @current_dps = @dps.inject(0.0) { |sum, el| sum + el } / (@dps.size/6)
     end
   
+    # Creates shots out of the tower when a pulse returns
     def draw_pulses
       if !@pulse.empty?
         shot = @pulse.pop
@@ -36,6 +53,7 @@ module Abstraxion
       end
     end
 
+    # Steps through towers and deterines speed of updates, spawns monsters
     def update
       super
       if $delay == 10

@@ -1,4 +1,5 @@
 module Enemy
+  # Monster class
   class Mob
     attr_reader :hp, :name
     def initialize(name, hp, damage)

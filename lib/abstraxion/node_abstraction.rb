@@ -1,10 +1,13 @@
 module NodeAbxn
+  # A high level abstraction of node
   class Molecule
     attr_accessor :type, :conn
     def initialize(conn = {},type = :basic)
       @type = type # TODO: Temporary skip for this level of abx
       @conn = conn # TODO: Temporary skip for this level of abx
     end
+
+    # Temporary set processing for each node type
     def send_and_receive_pulse(pulse)
       # TODO: Temporary skips for this level of abx
       outbound = {}
@@ -29,6 +32,8 @@ module NodeAbxn
       outbound
     end
   end
+
+  # A sub-unit of the node abstraction
   class Atom
     def initialize(id)
       @id = id
@@ -37,22 +42,6 @@ module NodeAbxn
       @connections = { :N=>0, :S=>0, :E=>0, :W=>0 }
       @pulse = nil
     end
-
-
-  end
-
-  class Battery < Atom
-  
-  end
-  class Amplifier < Atom
-  end
-  class Prism < Atom
-  end
-  class Polarizer < Atom
-  end
-  class Reflector < Atom
-  end
-  class Refractor < Atom
   end
 end
 

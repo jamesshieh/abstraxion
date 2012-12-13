@@ -21,6 +21,7 @@ module TowerAbxn
       set_neighbors
     end
 
+    # Generator for node IDs
     def id
       Fiber.new do
         id = 0
@@ -31,6 +32,7 @@ module TowerAbxn
       end
     end
 
+    # Method that creates the grid initially
     def generate_grid
       grid = []
       @y.times do
@@ -43,6 +45,7 @@ module TowerAbxn
       grid
     end
 
+    # Method that sets pointers to neighboring nodes in the grid
     def set_neighbors
       for i in (0..@x-1)
         for j in (0..@y-1)
@@ -55,36 +58,44 @@ module TowerAbxn
       end
     end
 
+    # Returns connection status
     def connected?(x, y, direction)
       @grid[y][x].connected?(direction)
     end
 
+    # Creates a new connection if a neighbor exists
     def create_connection(x, y, direction)
       @grid[y][x].connect(direction)
     end
 
+    # Removes the entire connection between two nodes
     def remove_connection(x, y, direction)
       @grid[y][x].disconnect(direction)
     end
 
+    # Returns the node type
     def get_type(x, y)
       @grid[y][x].type
     end
 
+    # Sets the node type
     def set_type(x, y, type)
       @grid[y][x].set_type(type)
     end
 
+    # Gets a pulse from the generator and sends it to grid
     def pulse(pulse)
       @originator.generator_receive_pulse(pulse)
     end
 
+    # Resets tower to have no pulses
     def reset_pulses
       @grid_iterator.each do |node|
         node.clear_buffer
       end
     end
 
+    # Steps the pulses in the tower forward one node
     def update
       @grid_iterator.each do |node|
         pulse = node.send_pulse
@@ -113,8 +124,9 @@ module TowerAbxn
       @pulse_buffer = []
     end
 
+    # Returns if the node is connected to a neighbor
     def connected?(direction)
-      @nodeabxn.conn[direction] == 1
+      @nodeabxn.conn[direction] == 1 || @nodeabxn.conn[direction] == 2
     end
 
     # Dump the buffer into the active pulses
@@ -144,9 +156,11 @@ module TowerAbxn
       @nodeabxn.type = type
     end
 
+    # Returns the node abstraction's type
     def type
       @nodeabxn.type
     end
+
     # Connect a neighbor
     def connect(direction)
       inverse = OPPOSITE_NODES[direction]
@@ -183,6 +197,7 @@ module TowerAbxn
       @zero_pulse = pulse
     end
 
+    # Special type return for originator
     def type
       :originator
     end
@@ -199,7 +214,7 @@ module TowerAbxn
       if !@pulses.empty?
         pulse = aggregate_pulses(@pulses)
 
-        return pulse
+        pulse
       end
     end
   end

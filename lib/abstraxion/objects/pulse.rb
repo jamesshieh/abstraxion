@@ -1,4 +1,5 @@
 module Abstraxion
+
   class Pulse < GameObject
     trait :bounding_circle
     traits :collision_detection
@@ -19,4 +20,12 @@ module Abstraxion
       @y += -(WINDOW_H/2 - @target)/((@slope-125)/5)
     end
   end
+
+  class Splash < GameObject
+    trait :bounding_circle
+    traits :collision_detection
+    def initialize(options = {})
+    end
+  end
+
 end
