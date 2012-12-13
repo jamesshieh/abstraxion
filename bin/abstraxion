@@ -8,12 +8,6 @@ ASSET_SIZE = 100
 NODE_SIZE = 100.0
 WINDOW_H = 550
 WINDOW_W = 1000
-WHITE = Color::WHITE
-RED = Color::RED
-BLUE = Color::BLUE
-GREEN = Color::GREEN
-YELLOW = Color::YELLOW
-CYAN = Color::CYAN
 FACTOR = NODE_SIZE/ASSET_SIZE
 
 class Game < Chingu::Window
@@ -22,199 +16,15 @@ class Game < Chingu::Window
     media_dir = File.expand_path(File.join('media'))
     Image.autoload_dirs.unshift File.join(media_dir, 'images')
 
+    super(WINDOW_W, WINDOW_H, false)
 
     $size = FACTOR
     $node_size = NODE_SIZE * $size
     $delay = 10
-    super(WINDOW_W, WINDOW_H, false)
     $tower = MapAbxn::Tower.new(5,5)
     $generator = MapAbxn::Generator.new(7, $tower)
+
     push_game_state(Menu)
-  end
-end
-
-class Master < Chingu::GameState
-  def initialize
-    @cursor = Cursor.create(:x => $window.mouse_x, :y=>$window.mouse_y)
-    super
-  end
-  def setup
-    draw_tower
-  end
-
-  def draw_charges
-    Charge.destroy_all
-    $tower.grid.grid_iterator.each_with_index do |node, i|
-      draw_charge(i % $tower.y, i / $tower.y) if !node.pulses.empty?
-    end
-  end
-
-  def draw_charge(x, y)
-    draw_x = x*$node_size + $node_size/2
-    draw_y = WINDOW_H / 2 - 0.5 * $tower.y * $node_size + y*$node_size + $node_size/2
-    Charge.create(:x => draw_x, :y => draw_y, :factor_x => $size, :factor_y => $size)
-  end
-
-  def draw_tower
-    Node.destroy_all
-    OutConnector.destroy_all
-    InConnector.destroy_all
-    $tower.grid.grid_iterator.each_with_index do |node, i|
-      draw_node(i % $tower.y, i / $tower.y, node.connections, node.type)
-    end
-  end
-
-  def draw_node(x, y, connections, type)
-    draw_x = x*$node_size + $node_size/2
-    draw_y = WINDOW_H / 2 - 0.5 * $tower.y * $node_size + y*$node_size + $node_size/2
-    Node.create({:x => draw_x, :y => draw_y, :factor_x => $size, :factor_y => $size}, type)
-    n, s, e, w = connections.values
-    OutConnector.create(:x => draw_x, :y => draw_y,:angle => 0, :factor_x => $size, :factor_y => $size) if n == 1
-    OutConnector.create(:x => draw_x, :y => draw_y,:angle => 180, :factor_x => $size, :factor_y => $size) if s == 1
-    OutConnector.create(:x => draw_x, :y => draw_y,:angle => 90, :factor_x => $size, :factor_y => $size) if e == 1
-    OutConnector.create(:x => draw_x, :y => draw_y,:angle => 270, :factor_x => $size, :factor_y => $size) if w == 1
-    InConnector.create(:x => draw_x, :y => draw_y,:angle => 0, :factor_x => $size, :factor_y => $size) if n == 2
-    InConnector.create(:x => draw_x, :y => draw_y,:angle => 180, :factor_x => $size, :factor_y => $size) if s == 2
-    InConnector.create(:x => draw_x, :y => draw_y,:angle => 90, :factor_x => $size, :factor_y => $size) if e == 2
-    InConnector.create(:x => draw_x, :y => draw_y,:angle => 270, :factor_x => $size, :factor_y => $size) if w == 2
-  end
-end
-
-class Build < Master
-  def initialize
-    super
-    @types ||= {:basic => :amplifier, :amplifier => :splitter, :splitter => :switcher, :switcher => :basic}
-    self.input = {  :escape => :exit,
-                    :space => Play,
-                    :left_mouse_button => :toggle_connection,
-                    :right_mouse_button => :edit_node_type
-    }
-  end
-
-  def setup
-    scale = 1
-    $node_size = NODE_SIZE.to_int * scale
-    $size = FACTOR * scale
-    super
-  end
-
-  def find_mouse_quadrant
-    m_x, m_y = $window.mouse_x, $window.mouse_y
-    x_offset = m_x % $node_size
-    y_offset = (m_y -(WINDOW_H / 2 - 0.5 * $tower.y * $node_size)) % $node_size
-    if y_offset > x_offset
-      ($node_size - y_offset) > x_offset ? :W : :S
-    else
-      ($node_size - y_offset) > x_offset ? :N : :E
-    end
-  end
-
-  def toggle_connection
-    m_x, m_y = $window.mouse_x, $window.mouse_y
-    x = (m_x/$node_size).to_int
-    y = (m_y -(WINDOW_H / 2 - 0.5 * $tower.y * $node_size)).to_int/$node_size
-    direction = find_mouse_quadrant
-    return unless x.between?(0, $tower.x-1) && y.between?(0, $tower.y-1)
-    if $tower.grid.connected?(x, y, direction)
-      $tower.grid.remove_connection(x, y, direction)
-    else
-      $tower.grid.create_connection(x, y, direction)
-    end
-    draw_tower
-  end
-
-  def edit_node_type
-    m_x, m_y = $window.mouse_x, $window.mouse_y
-    x = m_x/$node_size
-    y = (m_y -(WINDOW_H / 2 - 0.5 * $tower.y * $node_size))/$node_size
-    if (x > 0 || y > 0) && (x < $tower.x && y < $tower.y)
-      $tower.grid.set_type(x, y, @types[$tower.grid.get_type(x,y)])
-    end
-    draw_tower
-  end
-
-  def draw_mouse_hover_connection
-    HoverConnector.destroy_all
-    m_x, m_y = $window.mouse_x, $window.mouse_y
-    x = (m_x/$node_size).to_int
-    y = (m_y -(WINDOW_H / 2 - 0.5 * $tower.y * $node_size)).to_int/$node_size
-    if x.between?(0,$tower.x-1) && y.between?(0,$tower.y-1)
-      direction = find_mouse_quadrant
-      draw_x = x*$node_size + $node_size/2
-      draw_y = WINDOW_H / 2 - 0.5 * $tower.y * $node_size + y*$node_size + $node_size/2
-      @angle ||= {:N => 0,:S => 180, :E => 90, :W => 270}
-      HoverConnector.create(:x => draw_x, :y => draw_y, :angle => @angle[direction], :factor_x => $size, :factor_y => $size)
-    end
-  end
-
-  def update
-    draw_mouse_hover_connection
-    $window.caption = "Edit Mode. FPS #{$window.fps}"
-  end
-
-end
-
-class Play < Master
-  def initialize
-    @pulse = []
-    @current_dps = 0
-    @dps = []
-    super
-    self.input = {  :escape => :exit,
-                    :space => Build
-    }
-  end
-
-  def setup
-    super
-    scale = 0.5
-    $size = FACTOR * scale
-    $node_size = NODE_SIZE * scale
-    draw_tower
-  end
-
-  def dps(damage)
-    @dps << damage
-    @dps.shift if @dps.size > 60
-    @current_dps = @dps.inject(0.0) { |sum, el| sum + el } / (@dps.size/6)
-  end
-
-  def draw_pulses
-    if !@pulse.empty?
-      shot = @pulse.pop
-      puts "Pulse fired causing #{shot.amplitude} points of damage!"
-      Pulse.create(shot, :x => $node_size * $tower.x, :y => WINDOW_H / 2)
-    end
-  end
-
-  def update
-    super
-    if $delay == 10
-      $generator.update
-      @pulse = $tower.update
-      if !@pulse.empty?
-        dps(@pulse[0].amplitude)
-      else
-        dps(0)
-      end
-      draw_charges
-      draw_pulses
-      $delay = 0
-    else
-      $delay += 1
-    end
-    $window.caption = "FPS: #{$window.fps}, DPS: #{@current_dps.round(3)}"
-  end
-end
-
-class Menu < Chingu::GameState
-  def initialize
-    super
-    @title = Chingu::Text.create(:text => "Abstraxion", :x => WINDOW_W/2 - 300, :y => WINDOW_H/2, :size => 50)
-    @prompt = Chingu::Text.create(:text => "Press 'space' to begin", :x => WINDOW_W/2 - 300, :y => WINDOW_H/2 + 100, :size => 30)
-    self.input = { :escape => :exit,
-                   :space => Play
-    }
   end
 end
 
