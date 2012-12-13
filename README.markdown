@@ -1,13 +1,26 @@
-Abstraxion v0.2
+Abstraxion v0.3
 ===============
 
 Abstraxion is a game based around the concept of abstraction.
 
-### To run
+### Dependencies
+
+Please see https://github.com/jlnr/gosu/wiki and check in the sidebar for your
+system specific dependencies for the Gosu game library.
+
+Install gem dependencies with:
 
     bundle install
-    bin/console_axn   # for console printing tester
-    bin/abstraxion    # for visual gosu client
+
+### To run
+
+    bin/abstraxion
+
+#### Controls
+
+Space - Toggle between Build and Play modes
+Left Click - Add node connections
+Right Click - Toggle node types
 
 ### Console Abstraxion
 
