@@ -40,6 +40,10 @@ module MapAbxn
       @pulses = []
     end
 
+    def reset
+      @grid.reset_pulses
+    end
+
     def pulse(pulse)
       @grid.pulse(pulse)
     end

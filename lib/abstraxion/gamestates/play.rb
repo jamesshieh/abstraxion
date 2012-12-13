@@ -15,6 +15,8 @@ module Abstraxion
       scale = 0.5
       $size = FACTOR * scale
       $node_size = NODE_SIZE * scale
+
+      $tower.reset
       draw_tower
     end
 

@@ -79,6 +79,12 @@ module TowerAbxn
       @originator.generator_receive_pulse(pulse)
     end
 
+    def reset_pulses
+      @grid_iterator.each do |node|
+        node.clear_buffer
+      end
+    end
+
     def update
       @grid_iterator.each do |node|
         pulse = node.send_pulse

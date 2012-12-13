@@ -17,7 +17,7 @@ module NodeAbxn
           outbound[connections[0]] = pulse.amplify(1.2)
         when :splitter
           connections.each do |x|
-            outbound[x] = PulseEngine::Pulse.new(pulse.amplitude/connections.length)
+            outbound[x] = PulseEngine::Pulse.new(pulse.amplitude/connections.length * 0.9)
           end
         when :switcher
           @switch ||= (0..connections.length-1).cycle
