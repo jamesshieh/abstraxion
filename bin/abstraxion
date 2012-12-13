@@ -2,6 +2,7 @@
 
 $LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__),".." , "lib")))
 require 'abstraxion'
+include Abstraxion
 
 ASSET_SIZE = 100
 NODE_SIZE = 100.0
@@ -23,7 +24,7 @@ class Game < Chingu::Window
     super(WINDOW_W, WINDOW_H, false)
     $tower = MapAbxn::Tower.new(5,5)
     $generator = MapAbxn::Generator.new(7, $tower)
-    push_game_state(Play)
+    push_game_state(Menu)
   end
 end
 
@@ -201,75 +202,14 @@ class Play < Master
   end
 end
 
-class Mob < GameObject
-  def initialize(options = {})
-    @zorder = 40
-    super(options.merge(:image => Image["poring.png"]))
-  end
-
-end
-
-class Charge < GameObject
-  def initialize(options = {})
-    @zorder = 20
-    super(options.merge(:image => Image["charge.png"]))
-  end
-end
-
-class Node < GameObject
-  def initialize(options = {}, type)
-    @zorder = 8
-    super(options.merge(:image => Image[type.to_s + ".png"]))
-  end
-end
-
-class InConnector < GameObject
-  def initialize(options = {})
-    @zorder = 9
-    super(options.merge(:image => Image["inconnection.png"]))
-  end
-end
-
-class OutConnector < GameObject
-  def initialize(options = {})
-    @zorder = 9
-    super(options.merge(:image => Image["outconnection.png"]))
-  end
-end
-
-class HoverConnector < GameObject
-  def initialize(options = {})
-    @zorder = 50
-    super(options.merge(:image => Image["hoverconnection.png"]))
-  end
-end
-
-class Cursor < GameObject
-  def initialize(options = {})
-    super(options.merge(:image => Image["cursor.png"]))
-    @zorder = 500
-  end
-  def update
-    @x = $window.mouse_x + 6
-    @y = $window.mouse_y + 10
-  end
-end
-
-class Generator < GameObject
-  def initialize(options = {})
-    @zorder = 50
-    super(options.merge(:image => Image["hoverconnection.png"]))
-  end
-end
-
-class Pulse < GameObject
-  def initialize(pulse, options = {})
-    @pulse = pulse
-    @zorder = 30
-    super(options.merge(:image=>Image["pulse.png"]))
-  end
-  def update
-    @x += 5
+class Menu < Chingu::GameState
+  def initialize
+    super
+    @title = Chingu::Text.create(:text => "Abstraxion", :x => WINDOW_W/2 - 300, :y => WINDOW_H/2, :size => 50)
+    @prompt = Chingu::Text.create(:text => "Press 'space' to begin", :x => WINDOW_W/2 - 300, :y => WINDOW_H/2 + 100, :size => 30)
+    self.input = { :escape => :exit,
+                   :space => Play
+    }
   end
 end
 

@@ -14,7 +14,7 @@ module NodeAbxn
         when :originator
           outbound[connections[0]] = pulse
         when :amplifier
-          outbound[connections[0]] = pulse.amplify(1.5)
+          outbound[connections[0]] = pulse.amplify(1.2)
         when :splitter
           connections.each do |x|
             outbound[x] = PulseEngine::Pulse.new(pulse.amplitude/connections.length)
