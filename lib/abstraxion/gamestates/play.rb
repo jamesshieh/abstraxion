@@ -52,15 +52,11 @@ module Abstraxion
       else
         $delay += 1
       end
-      @mobs << Mob.create(:x => 1280, :y => rand(300..400)) if rand(0..1000) <= @level
-      @mobs.each do |monster|
+      Mob.create(:x => 1280, :y => rand(300..400)) if rand(0..1000) <= @level
+      Mob.each do |monster|
         monster.each_collision(Pulse) do |mob, pulse|
           mob.hit(pulse.damage)
           pulse.destroy
-          if !mob.alive?
-            mob.destroy 
-            @level += 1
-          end
         end
       end
       $cursor.update

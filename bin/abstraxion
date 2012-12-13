@@ -22,7 +22,7 @@ class Game < Chingu::Window
     $node_size = NODE_SIZE * $size
     $delay = 10
     $tower = MapAbxn::Tower.new(5,5)
-    $generator = MapAbxn::Generator.new(7, $tower)
+    $generator = MapAbxn::Generator.new(4, $tower)
 
     push_game_state(Menu)
   end

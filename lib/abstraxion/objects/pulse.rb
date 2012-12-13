@@ -6,6 +6,8 @@ module Abstraxion
       super(options.merge(:image=>Image["pulse.png"]))
       @pulse = pulse
       @zorder = 30
+      @target = $window.mouse_y
+      @slope = $window.mouse_x
     end
 
     def damage
@@ -14,7 +16,7 @@ module Abstraxion
 
     def update
       @x += 5
-      @y < $window.mouse_y ? @y += 2 : @y -= 2
+      @y += -(WINDOW_H/2 - @target)/((@slope-125)/5)
     end
   end
 end

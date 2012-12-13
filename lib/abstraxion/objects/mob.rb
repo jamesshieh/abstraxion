@@ -8,6 +8,7 @@ module Abstraxion
       @maxhp = @hp
       @hpbar = HPBar.create({}, self)
       super(options.merge(:image => Image["poring.png"]))
+      cache_bounding_circle
     end
 
     def destroy
@@ -20,7 +21,8 @@ module Abstraxion
     end
 
     def hp_bar_remaining
-      (@hp/@maxhp * 4.0).to_i
+      val = (@hp/@maxhp * 4.0).to_i
+      val.between?(0, 4) ? val : 0
     end
 
     def hit(damage)
@@ -32,6 +34,7 @@ module Abstraxion
     end
 
     def update
+      destroy unless alive?
       @x -= 1
     end
   end
