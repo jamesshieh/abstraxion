@@ -18,6 +18,11 @@ FACTOR = NODE_SIZE/ASSET_SIZE
 
 class Game < Chingu::Window
   def initialize
+
+    media_dir = File.expand_path(File.join('media'))
+    Image.autoload_dirs.unshift File.join(media_dir, 'images')
+
+
     $size = FACTOR
     $node_size = NODE_SIZE * $size
     $delay = 10
