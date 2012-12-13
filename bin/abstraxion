@@ -6,8 +6,8 @@ include Abstraxion
 
 ASSET_SIZE = 100
 NODE_SIZE = 100.0
-WINDOW_H = 550
-WINDOW_W = 1000
+WINDOW_H = 720
+WINDOW_W = 1280
 FACTOR = NODE_SIZE/ASSET_SIZE
 
 class Game < Chingu::Window

@@ -12,7 +12,7 @@ module Abstraxion
 
     def setup
       super
-      scale = 0.5
+      scale = 0.25
       $size = FACTOR * scale
       $node_size = NODE_SIZE * scale
 

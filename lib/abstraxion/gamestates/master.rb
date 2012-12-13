@@ -6,6 +6,7 @@ module Abstraxion
     def setup
       draw_tower
       draw_cursor
+      Chingu::GameObject.create(:image => 'background.png', :rotation_center => :top_left, :zorder => 0)
     end
 
     def draw_cursor
