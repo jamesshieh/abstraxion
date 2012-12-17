@@ -1,4 +1,5 @@
 module Abstraxion
+  # Save and load superclass
   class SaveLoadMenu < Chingu::GameState
 
     include GameStateHelper
@@ -12,6 +13,7 @@ module Abstraxion
       draw_cursor
     end
 
+    # Saves state based on mouse hover position
     def save_state
       savefile = ''
       if @save1.mouse_hover?
@@ -21,6 +23,7 @@ module Abstraxion
       elsif @save3.mouse_hover?
         savefile = 'save3'
       end
+
       unless savefile.nil?
         puts "Saving state to #{savefile}...."
         marshal_dump = Marshal.dump($game)
@@ -31,6 +34,7 @@ module Abstraxion
       end
     end
 
+    # Loads state based on mouse hover position
     def load_state
       savefile = ''
       if @save1.mouse_hover?
@@ -40,6 +44,7 @@ module Abstraxion
       elsif @save3.mouse_hover?
         savefile = 'save3'
       end
+
       unless savefile.nil?
         puts "Loading state from #{savefile}...."
         file = File.open('saves/save1.sav', 'r')
@@ -51,15 +56,12 @@ module Abstraxion
       end
     end
 
+    # Draw the 3 save boxes
     def draw
       super
       @save1 ||= SaveSlot.create(:x => WINDOW_W/2, :y => 2 * WINDOW_H/7 )
       @save2 ||= SaveSlot.create(:x => WINDOW_W/2, :y => 4 * WINDOW_H/7)
       @save3 ||= SaveSlot.create(:x => WINDOW_W/2, :y => 6 * WINDOW_H/7)
-    end
-
-    def update
-      super
     end
   end
 end
