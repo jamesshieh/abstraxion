@@ -20,7 +20,7 @@ module Abstraxion
       $window.draw_quad(0,0,@color,
                         $window.width,0,@color,
                         $window.width,$window.height,@color,
-                        0,$window.height,@color)
+                        0,$window.height,@color, Chingu::DEBUG_ZORDER)
     end
   end
 end
