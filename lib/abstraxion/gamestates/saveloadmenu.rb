@@ -47,6 +47,23 @@ module Abstraxion
       end
     end
 
+    # Load states for preview
+    def load_previews
+      files = ['save1', 'save2', 'save3']
+      files.each do |save|
+        begin
+          file = File.open('saves/' + save + '.sav', 'r')
+          state = Marshal.load(file.read)
+          @saved_towers[save.to_sym] = state.tower
+          puts "Loaded preview for #{save}."
+          file.close
+        rescue Errno::ENOENT
+          puts "Unable to load preview for #{save}."
+          @saved_towers[save.to_sym] = nil
+        end
+      end
+    end
+
     # Loads state based on mouse hover position
     def load_state
       savefile = ''
@@ -76,9 +93,6 @@ module Abstraxion
     # Draw the 3 save boxes
     def draw
       super
-      @save1 ||= SaveSlot.create(:x => WINDOW_W/2, :y => 2 * WINDOW_H/7 )
-      @save2 ||= SaveSlot.create(:x => WINDOW_W/2, :y => 4 * WINDOW_H/7)
-      @save3 ||= SaveSlot.create(:x => WINDOW_W/2, :y => 6 * WINDOW_H/7)
     end
   end
 end

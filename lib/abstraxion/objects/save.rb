@@ -5,7 +5,7 @@ module Abstraxion
 
     def initialize(options = {})
       super(options.merge(:image => Image["save.png"]))
-      @zorder = 100
+      @zorder = 5
     end
 
     def update
