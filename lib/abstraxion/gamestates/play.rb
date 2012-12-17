@@ -40,7 +40,7 @@ module Abstraxion
     def dps(damage)
       @dps << damage
       @dps.shift if @dps.size > 60
-      @current_dps = @dps.inject(0.0) { |sum, el| sum + el } / (@dps.size)
+      @current_dps = @dps.inject(0.0) { |sum, el| sum + el }
     end
   
     # Creates shots out of the tower when a pulse returns
@@ -56,7 +56,7 @@ module Abstraxion
       super
       draw_charges
       draw_pulses
-      Mob.create(:x => 1280, :y => rand(300..400)) if rand(0..1000) <= @level
+      Mob.create(:x => 1280, :y => rand(300..400)) if rand(0..600) <= @level
     end
 
     # Steps through towers and deterines speed of updates, spawns monsters
