@@ -16,7 +16,7 @@ module Abstraxion
     def setup
       scale = 1
       $node_size = NODE_SIZE.to_int * scale
-      $size = FACTOR * scale
+      @size = FACTOR * scale
       super
     end
 

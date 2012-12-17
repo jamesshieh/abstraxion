@@ -6,7 +6,7 @@ module Abstraxion
       @current_dps = 0
       @dps = []
       scale = 0.25
-      $size = FACTOR * scale
+      @size = FACTOR * scale
       $node_size = NODE_SIZE * scale
       super
       self.input = {  :escape => :exit,
@@ -34,7 +34,7 @@ module Abstraxion
     def draw_charge(x, y)
       draw_x = x*$node_size + $node_size/2
       draw_y = WINDOW_H / 2 - 0.5 * $tower.y * $node_size + y*$node_size + $node_size/2
-      Charge.create(:x => draw_x, :y => draw_y, :factor_x => $size, :factor_y => $size)
+      Charge.create(:x => draw_x, :y => draw_y, :factor_x => @size, :factor_y => @size)
     end
 
     # Calculates the DPS of the tower by taking the last 10 seconds of shots
