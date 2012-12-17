@@ -15,6 +15,7 @@ module TowerAbxn
       set_neighbors
     end
 
+    # Enumerator object to iterate over nodes
     def grid_iterator
       Enumerator.new do |x|
         @grid.each do |row|
@@ -25,10 +26,12 @@ module TowerAbxn
       end
     end
 
+    # Marshal dump function for saving to external function
     def marshal_dump
       [@x, @y, @originator, @grid, @current_id, @pulses]
     end
-    
+
+    # Marshal load function for loading from file
     def marshal_load array
       @x, @y, @originator, @grid, @current_id, @pulses = array
     end

@@ -31,6 +31,14 @@ module NodeAbxn
       end
       outbound
     end
+
+    def marshal_dump
+      [@type, @conn]
+    end
+
+    def marshal_load(array)
+      @type, @conn = array
+    end
   end
 
   # A sub-unit of the node abstraction
