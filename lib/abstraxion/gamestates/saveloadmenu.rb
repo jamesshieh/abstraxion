@@ -45,6 +45,7 @@ module Abstraxion
         file.close
         puts "Save Complete"
       end
+      self.setup
     end
 
     # Load states for preview
