@@ -28,7 +28,7 @@ module Abstraxion
 
     # Saves state based on mouse hover position
     def save_state
-      savefile = ''
+      savefile = nil
       if @save1.mouse_hover?
         savefile = 'save1'
       elsif @save2.mouse_hover?
