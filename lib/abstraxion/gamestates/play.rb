@@ -41,7 +41,7 @@ module Abstraxion
     def dps(damage)
       @dps << damage
       @dps.shift if @dps.size > 60
-      @current_dps = @dps.inject(0.0) { |sum, el| sum + el } / (@dps.size/6)
+      @current_dps = @dps.inject(0.0) { |sum, el| sum + el } / (@dps.size)
     end
   
     # Creates shots out of the tower when a pulse returns
@@ -53,24 +53,20 @@ module Abstraxion
       end
     end
 
+    def draw
+      super
+      draw_charges
+      draw_pulses
+      Mob.create(:x => 1280, :y => rand(300..400)) if rand(0..1000) <= @level
+    end
+
     # Steps through towers and deterines speed of updates, spawns monsters
     def update
       super
-      if $delay == 10
-        $generator.update
-        @pulse = $tower.update
-        if !@pulse.empty?
-          dps(@pulse[0].amplitude)
-        else
-          dps(0)
-        end
-        draw_charges
-        draw_pulses
-        $delay = 0
-      else
-        $delay += 1
-      end
-      Mob.create(:x => 1280, :y => rand(300..400)) if rand(0..1000) <= @level
+      game_objects.select { |obj| obj.outside_window? }.each(&:destroy)
+      $generator.update
+      @pulse = $tower.update
+      !@pulse.empty? ? dps(@pulse[0].amplitude) : dps(0)
       Mob.each do |monster|
         monster.each_collision(Pulse) do |mob, pulse|
           mob.hit(pulse.damage)
