@@ -1,4 +1,4 @@
-Abstraxion v0.3
+Abstraxion v0.4
 ===============
 
 Abstraxion is a game based around the concept of abstraction.
@@ -21,28 +21,14 @@ Install gem dependencies with:
 Space - Toggle between Build and Play modes
 Left Click - Add node connections
 Right Click - Toggle node types
+P - Pause menu
+S (on pause menu) - Save menu, click to save to a slot
+L (on pause menu) - Load menu, click to load from a slot
 
-### Console Abstraxion
+### To expand:
 
-Currently displays the grid layer of the game represented by unicode box
-drawings.
-
-Node legend:  
-Bold red nodes currently have a pulse in them  
-Red nodes are generators, pulses originate from these nodes and pulses that
-reach these nodes become shots  
-Yellow nodes are amplifiers, these increase the pulse power  
-Blue nodes are switchers, these will alternate the pulses between their
-connections  
-Green nodes are splitters, these will split nodes into multiple directions at
-the cost of power  
-
-Currently building generalized game logic that can be applied to different
-frameworks for the game. More details to come when an interface is built out.
-
-### Currently working on:
-
-Visual node connections  
 Node level abstraction  
-Main map and playability  
+Main map and building towers around the map  
+Monster spawning, pathing, and mazing  
+Tower proc effects and other tower enhancements  
 Monsters and waves for core gameplay  
