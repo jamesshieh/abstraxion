@@ -45,7 +45,8 @@ module Abstraxion
       else
         $tower.grid.create_connection(x, y, direction)
       end
-      draw_tower
+      clear_towers
+      draw_tower($tower, 0 , WINDOW_H/2, @size)
     end
 
     # Switches a node's type to the next type in the list
@@ -56,7 +57,8 @@ module Abstraxion
       if (x > 0 || y > 0) && (x < $tower.x && y < $tower.y)
         $tower.grid.set_type(x, y, @types[$tower.grid.get_type(x,y)])
       end
-      draw_tower
+      clear_towers
+      draw_tower($tower, 0 , WINDOW_H/2, @size)
     end
 
     # Draws a light blue indicator for mouse-over when drawing new connections

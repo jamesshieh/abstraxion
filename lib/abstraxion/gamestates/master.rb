@@ -10,7 +10,8 @@ module Abstraxion
 
     # Redraw the tower and cursor everytime a gamestate is loaded
     def setup
-      draw_tower
+      clear_towers
+      draw_tower($tower, 0, WINDOW_H/2, @size)
       draw_cursor
       Chingu::GameObject.create(:image => 'background.png', :rotation_center => :top_left, :zorder => 0)
     end

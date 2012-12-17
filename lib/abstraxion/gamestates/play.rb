@@ -15,11 +15,10 @@ module Abstraxion
     end
 
     def setup
-      super
+      $tower.reset
       Mob.destroy_all
       Pulse.destroy_all
-      $tower.reset
-      draw_tower
+      super
     end
 
     # Iterate through grid and draw charges where they exist
