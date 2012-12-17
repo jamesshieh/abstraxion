@@ -8,6 +8,10 @@ module Abstraxion
                      :s => Save,
                      :l => Load
       }
+      @font = Gosu::Font[35]
+      @text = "PAUSED - press 'ESC' or 'P' to unpause"
+      @savemenu = "Press 'S' for save menu"
+      @loadmenu = "Press 'L' for load menu"
     end
 
     def unpause
@@ -21,6 +25,9 @@ module Abstraxion
                         $window.width,0,@color,
                         $window.width,$window.height,@color,
                         0,$window.height,@color, Chingu::DEBUG_ZORDER)
+      @font.draw(@text, $window.width/2, $window.height/2 - 100, Chingu::DEBUG_ZORDER)
+      @font.draw(@savemenu, $window.width/2, $window.height/2, Chingu::DEBUG_ZORDER)
+      @font.draw(@loadmenu, $window.width/2, $window.height/2 + 50, Chingu::DEBUG_ZORDER)
     end
   end
 end
