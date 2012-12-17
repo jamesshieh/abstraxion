@@ -47,7 +47,7 @@ module Abstraxion
 
       unless savefile.nil?
         puts "Loading state from #{savefile}...."
-        file = File.open('saves/save1.sav', 'r')
+        file = File.open('saves/' + savefile + '.sav', 'r')
         $game = Marshal.load(file.read)
         $tower = $game.tower
         $generator = $game.generator
