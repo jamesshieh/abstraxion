@@ -7,6 +7,14 @@ module MapAbxn
       @tower = tower # temporary pointer to tower before wiring is enabled on the map level
     end
 
+    def marshal_dump
+      [@delay, @hp, @tower]
+    end
+
+    def marshal_load array
+      @delay, @hp, @tower = array
+    end
+
     # Generates a new pulse
     def generate_pulse
       @gen ||= Fiber.new do

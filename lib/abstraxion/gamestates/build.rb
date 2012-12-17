@@ -6,6 +6,7 @@ module Abstraxion
       @types ||= {:basic => :amplifier, :amplifier => :splitter, :splitter => :switcher, :switcher => :basic}
       self.input = {  :escape => :exit,
                       :space => Play,
+                      :s => Save,
                       :left_mouse_button => :toggle_connection,
                       :right_mouse_button => :edit_node_type
       }

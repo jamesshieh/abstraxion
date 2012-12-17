@@ -7,24 +7,36 @@ module TowerAbxn
     def initialize(x, y)
       @x, @y = x, y
       @pulses = []
+      @originator = Originator.new(id.resume)
+      @current_id = 0
       @id ||= id
-      @originator = Originator.new(@id.resume)
       @grid ||= generate_grid
       @grid[0][0] = @originator # NOTE: Temp setting
-      @grid_iterator = Enumerator.new do |x|
+      set_neighbors
+    end
+
+    def grid_iterator
+      Enumerator.new do |x|
         @grid.each do |row|
           row.each do |col|
             x << col
           end
         end
       end
-      set_neighbors
+    end
+
+    def marshal_dump
+      [@x, @y, @originator, @grid, @current_id, @pulses]
+    end
+    
+    def marshal_load array
+      @x, @y, @originator, @grid, @current_id, @pulses = array
     end
 
     # Generator for node IDs
     def id
       Fiber.new do
-        id = 0
+        id = @current_id
         loop do
           Fiber.yield id
           id += 1
@@ -90,18 +102,18 @@ module TowerAbxn
 
     # Resets tower to have no pulses
     def reset_pulses
-      @grid_iterator.each do |node|
+      grid_iterator.each do |node|
         node.clear_buffer
       end
     end
 
     # Steps the pulses in the tower forward one node
     def update
-      @grid_iterator.each do |node|
+      grid_iterator.each do |node|
         pulse = node.send_pulse
         @pulses << pulse if !pulse.nil?
       end
-      @grid_iterator.each do |node|
+      grid_iterator.each do |node|
         node.clear_buffer
       end
       @pulses
