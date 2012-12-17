@@ -47,12 +47,16 @@ module Abstraxion
 
       unless savefile.nil?
         puts "Loading state from #{savefile}...."
-        file = File.open('saves/' + savefile + '.sav', 'r')
-        $game = Marshal.load(file.read)
-        $tower = $game.tower
-        $generator = $game.generator
-        file.close
-        puts 'Load Complete'
+        begin
+          file = File.open('saves/' + savefile + '.sav', 'r')
+          $game = Marshal.load(file.read)
+          $tower = $game.tower
+          $generator = $game.generator
+          file.close
+          puts 'Load Complete'
+        rescue Errno::ENOENT
+          puts "Unable to load save file"
+        end
       end
     end
 
