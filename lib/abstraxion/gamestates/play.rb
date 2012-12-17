@@ -5,7 +5,9 @@ module Abstraxion
       @level = 1
       @current_dps = 0
       @dps = []
-      @mobs = []
+      scale = 0.25
+      $size = FACTOR * scale
+      $node_size = NODE_SIZE * scale
       super
       self.input = {  :escape => :exit,
                       :space => Build
@@ -14,10 +16,8 @@ module Abstraxion
 
     def setup
       super
-      scale = 0.25
-      $size = FACTOR * scale
-      $node_size = NODE_SIZE * scale
-
+      Mob.destroy_all
+      Pulse.destroy_all
       $tower.reset
       draw_tower
     end
