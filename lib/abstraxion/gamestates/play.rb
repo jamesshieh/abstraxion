@@ -8,9 +8,11 @@ module Abstraxion
       scale = 0.10
       @size = FACTOR * scale
       $node_size = NODE_SIZE * scale
+      $cell_size = $node_size * 5
       super
       self.input = {  :escape => :exit,
-                      :space => TowerEdit
+                      :space => TowerEdit,
+                      :m => MapBuild
       }
     end
 
