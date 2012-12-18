@@ -26,6 +26,7 @@ class Game < Chingu::Window
     $game = GameWrapper::GameObj.new(5, 5, 10)
     $tower = $game.tower
     $generator = $game.generator
+    $map = $game.map
 
     # Start game state
     push_game_state(Menu)

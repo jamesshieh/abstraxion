@@ -1,7 +1,36 @@
 module GameStateHelper
+  # World play map drawing grid
+  def draw_map
+    draw_map_cells($map.x, $map.y)
+  end
+
+  # Draw empty map cells in a XxY grid
+  def draw_map_cells(x, y)
+    for i in (0..x-1)
+      for j in (0..y-1)
+        MapCellEmpty.create(:x => $node_size*5 * i + $node_size *5/2.0, :y => $node_size * 5 * j + $node_size * 5/2.0)
+      end
+    end
+  end
+
   # Create cursor
   def draw_cursor
     $cursor = Cursor.create(:x => $window.mouse_x, :y=>$window.mouse_y)
+  end
+
+  # Iterate through grid and draw charges where they exist
+  def draw_charges
+    Charge.destroy_all
+    $tower.grid.grid_iterator.each_with_index do |node, i|
+      draw_charge(i % $tower.y, i / $tower.y) if !node.pulses.empty?
+    end
+  end
+
+  # Draws a charge in a specific node
+  def draw_charge(x, y)
+    draw_x = x*$node_size + $node_size/2
+    draw_y = WINDOW_H / 2 - 0.5 * $tower.y * $node_size + y*$node_size + $node_size/2
+    Charge.create(:x => draw_x, :y => draw_y, :factor_x => @size, :factor_y => @size)
   end
 
   # Clears all tower objects

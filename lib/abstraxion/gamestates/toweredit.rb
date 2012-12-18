@@ -78,8 +78,8 @@ module Abstraxion
 
     # Updates ouse position and overlays
     def update
+      super
       draw_mouse_hover_connection
-      $cursor.update
       $window.caption = "Edit Mode. FPS #{$window.fps}"
     end
   end

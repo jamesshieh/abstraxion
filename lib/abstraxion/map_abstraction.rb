@@ -1,4 +1,5 @@
 module MapAbxn
+
   # A map level generator that creates pulses in set intervals
   class Generator
     def initialize(delay, tower, hp = 1000)
@@ -48,6 +49,12 @@ module MapAbxn
     def update
       pulse = generate_pulse.resume
       @tower.pulse(pulse) if pulse
+    end
+  end
+
+  # Wall object
+  class Wall
+    def initialize
     end
   end
 
