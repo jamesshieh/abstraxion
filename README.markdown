@@ -18,12 +18,12 @@ Install gem dependencies with:
 
 #### Controls
 
-Space - Toggle between Build and Play modes
-Left Click - Add node connections
-Right Click - Toggle node types
-P - Pause menu
-S (on pause menu) - Save menu, click to save to a slot
-L (on pause menu) - Load menu, click to load from a slot
+Space - Toggle between Build and Play modes  
+Left Click - Add node connections  
+Right Click - Toggle node types  
+P - Pause menu  
+S (on pause menu) - Save menu, click to save to a slot  
+L (on pause menu) - Load menu, click to load from a slot  
 
 ### To expand:
 
