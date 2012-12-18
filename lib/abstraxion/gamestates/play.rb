@@ -5,7 +5,7 @@ module Abstraxion
       @level = 1
       @current_dps = 0
       @dps = []
-      scale = 0.25
+      scale = 0.10
       @size = FACTOR * scale
       $node_size = NODE_SIZE * scale
       super
@@ -14,6 +14,7 @@ module Abstraxion
       }
     end
 
+    # Reset playing field
     def setup
       $tower.reset
       Mob.destroy_all
@@ -42,21 +43,22 @@ module Abstraxion
       @dps.shift if @dps.size > 60
       @current_dps = @dps.inject(0.0) { |sum, el| sum + el }
     end
-  
+
     # Creates shots out of the tower when a pulse returns
     def draw_pulses
       if !@pulse.empty?
         shot = @pulse.pop
-        puts "Pulse fired causing #{shot.amplitude} points of damage!"
         Pulse.create(shot, :x => $node_size * $tower.x, :y => WINDOW_H / 2)
       end
     end
 
+    def wave
+    end
+
     def draw
-      super
       draw_charges
       draw_pulses
-      Mob.create(:x => 1280, :y => rand(300..400)) if rand(0..600) <= @level
+      super
     end
 
     # Steps through towers and deterines speed of updates, spawns monsters
@@ -66,13 +68,6 @@ module Abstraxion
       $generator.update
       @pulse = $tower.update
       !@pulse.empty? ? dps(@pulse[0].amplitude) : dps(0)
-      Mob.each do |monster|
-        monster.each_collision(Pulse) do |mob, pulse|
-          mob.hit(pulse.damage)
-          pulse.destroy
-        end
-      end
-      $cursor.update
       $window.caption = "FPS: #{$window.fps}, DPS: #{@current_dps.round(3)}"
     end
   end

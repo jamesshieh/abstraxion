@@ -13,18 +13,21 @@ FACTOR = NODE_SIZE/ASSET_SIZE
 class Game < Chingu::Window
   def initialize
 
+    # Set media directory
     media_dir = File.expand_path(File.join('media'))
     Image.autoload_dirs.unshift File.join(media_dir, 'images')
 
+    # Set window size and not full screen
     super(WINDOW_W, WINDOW_H, false)
 
+    # Set globals
     $size = FACTOR
     $node_size = NODE_SIZE * $size
-    $delay = 10
     $game = GameWrapper::GameObj.new(5, 5, 10)
     $tower = $game.tower
     $generator = $game.generator
 
+    # Start game state
     push_game_state(Menu)
   end
 end

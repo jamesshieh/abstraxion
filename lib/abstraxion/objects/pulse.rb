@@ -7,7 +7,7 @@ module Abstraxion
       super(options.merge(:image=>Image["pulse.png"]))
       @pulse = pulse
       @zorder = 30
-      @slope = (WINDOW_H/2 - $window.mouse_y)/($window.mouse_x - 125)
+      @slope = (WINDOW_H/2 - $window.mouse_y)/($window.mouse_x - 50)
       @angle = Math.atan(@slope)
     end
 
