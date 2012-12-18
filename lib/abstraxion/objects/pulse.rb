@@ -3,11 +3,11 @@ module Abstraxion
   class Pulse < GameObject
     trait :bounding_circle
     traits :collision_detection
-    def initialize(pulse, options = {})
+    def initialize(pulse, options = {}, origin)
       super(options.merge(:image=>Image["pulse.png"]))
       @pulse = pulse
       @zorder = 30
-      @slope = (WINDOW_H/2 - $window.mouse_y)/($window.mouse_x - 50)
+      @slope = (origin[0] - $window.mouse_y)/($window.mouse_x - origin[1])
       @angle = Math.atan(@slope)
     end
 
