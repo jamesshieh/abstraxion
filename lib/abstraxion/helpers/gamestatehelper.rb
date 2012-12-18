@@ -28,8 +28,8 @@ module GameStateHelper
 
   # Draws a charge in a specific node
   def draw_charge(x, y)
-    draw_x = x*$node_size + $node_size/2
-    draw_y = WINDOW_H / 2 - 0.5 * $tower.y * $node_size + y*$node_size + $node_size/2
+    draw_x = x*$node_size + $node_size/2.0
+    draw_y = y*$node_size + $node_size/2.0
     Charge.create(:x => draw_x, :y => draw_y, :factor_x => @size, :factor_y => @size)
   end
 
@@ -49,8 +49,8 @@ module GameStateHelper
 
   # Draw a specific node and the special connector types between nodes
   def draw_node(dx, dy, x, y, connections, type, scale)
-    draw_x = dx + x*$node_size + $node_size/2
-    draw_y = dy - 0.5 * $tower.y * $node_size + y*$node_size + $node_size/2
+    draw_x = dx + x*$node_size + $node_size / 2.0
+    draw_y = dy + y*$node_size + $node_size / 2.0
     Node.create({:x => draw_x, :y => draw_y, :factor_x => scale, :factor_y => scale}, type)
     n, s, e, w = connections.values
     OutConnector.create(:x => draw_x, :y => draw_y,:angle => 0, :factor_x => scale, :factor_y => scale) if n == 1

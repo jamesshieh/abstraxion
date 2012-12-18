@@ -36,7 +36,7 @@ module Abstraxion
     def draw_pulses
       if !@pulse.empty?
         shot = @pulse.pop
-        Pulse.create(shot, :x => $node_size * $tower.x, :y => WINDOW_H / 2)
+        Pulse.create(shot, :x => $node_size * $tower.x, :y => $node_size * $tower.y)
       end
     end
 
