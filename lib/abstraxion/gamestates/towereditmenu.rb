@@ -1,10 +1,10 @@
 module Abstraxion
   # Building game state where the tower grid can be edited
-  class BuildMenu < Build
+  class TowerEditMenu < Build
     def initialize
       super
       self.input = {  :escape => :exit,
-                      :space => Build
+                      :space => TowerEdit
       }
     end
   end

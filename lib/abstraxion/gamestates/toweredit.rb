@@ -1,6 +1,6 @@
 module Abstraxion
   # Building game state where the tower grid can be edited
-  class Build < Master
+  class TowerEdit < Master
     def initialize
       super
       @types ||= {:basic => :amplifier, :amplifier => :splitter, :splitter => :switcher, :switcher => :basic}

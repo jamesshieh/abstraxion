@@ -10,7 +10,7 @@ module Abstraxion
       $node_size = NODE_SIZE * scale
       super
       self.input = {  :escape => :exit,
-                      :space => Build
+                      :space => TowerEdit
       }
     end
 
