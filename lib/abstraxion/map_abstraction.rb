@@ -10,6 +10,7 @@ module MapAbxn
       @connections = { 0 => nil }
     end
 
+    # Level up the generator, each level adds one possible connection
     def level_up
       @level += 1
       @maxhp = 1000 + @level * 100
@@ -17,10 +18,12 @@ module MapAbxn
       @connections[@level] = nil
     end
 
+    # Connect tower to the generator
     def connect_tower(tower, output_number)
       @connections[output_number] = tower
     end
 
+    # Kill the connection from that output node
     def kill_connection(output_number)
       @connections[output_number] = nil
     end
@@ -56,6 +59,8 @@ module MapAbxn
       @hp > 0
     end
 
+    # TODO: need to add mechanism to pulse to multiple connections and see who
+    # gets what pulses
     # Steps the generator forward and pulses if needed
     def update
       pulse = generate_pulse.resume

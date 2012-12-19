@@ -12,6 +12,7 @@ module Abstraxion
       $node_size = NODE_SIZE * scale
     end
 
+    # Load the screen and previews
     def setup
       super
       clear_towers

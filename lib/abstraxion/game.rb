@@ -8,10 +8,12 @@ module GameWrapper
       @map = MapAbxn::Map.new
     end
 
+    # Add a tower to the array of towers on the map
     def add_tower(tower)
       @tower << tower
     end
 
+    # TODO: add a way to remove specific towers
     def remove_tower
     end
   end
