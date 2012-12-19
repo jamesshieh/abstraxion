@@ -7,7 +7,17 @@ module MapAbxn
       @maxhp = 1000
       @hp = 1000
       @level = 0
-      @connections = { 0 => nil }
+      @connections = { 0 => nil, 1 => nil, 2 => nil }
+    end
+
+    # Default connection
+    def default_connection
+      open_connections = @connections.select{|k,v| v.nil?}.keys
+      if open_connections.empty?
+        rand(0..@connections.length-1)
+      else
+        open_connections[0]
+      end
     end
 
     # Level up the generator, each level adds one possible connection
@@ -65,8 +75,8 @@ module MapAbxn
     def update
       pulse = generate_pulse.resume
       @connections[0].pulse(pulse) if pulse && !@connections[0].nil?
-      @connections[1].pulse(pulse.dup) if pulse && !@connections[1].nil?
-      @connections[2].pulse(pulse.dup) if pulse && !@connections[2].nil?
+      @connections[1].pulse(PulseEngine::Pulse.new) if pulse && !@connections[1].nil?
+      @connections[2].pulse(PulseEngine::Pulse.new) if pulse && !@connections[2].nil?
     end
   end
 

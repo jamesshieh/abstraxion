@@ -7,7 +7,7 @@ module Abstraxion
                       :m => Play,
                       :space => TowerEdit,
                       :p => Pause,
-                      :left_mouse_button => :build_object,
+                      :left_mouse_button => :mouse_event,
                       :right_mouse_button => :edit_select,
                       :delete => :delete_object
       }
@@ -15,8 +15,6 @@ module Abstraxion
       $node_size = NODE_SIZE * scale
       @cell_size = $node_size * 5
       @size = FACTOR * scale
-      @mouse_x = 0
-      @mouse_y = 0
       @selection ||= nil
     end
 
@@ -29,10 +27,22 @@ module Abstraxion
       super
     end
 
+    def mouse_event
+      if $map.get_type(@grid_x, @grid_y).nil?
+        build_object
+      elsif $map.get_type(@grid_x, @grid_y) == MapAbxn::Generator
+        push_game_state(GeneratorConnectionPhase)
+      end
+    end
+
     def build_object
-      tower = Marshal.load(Marshal.dump(@selection))
-      cell = $map.create_object(@grid_x, @grid_y, tower)
-      $game.add_tower(cell) if cell.object.class == MapAbxn::Tower
+      if @selection.class == MapAbxn::Tower
+        tower = Marshal.load(Marshal.dump(@selection))
+        cell = $map.create_object(@grid_x, @grid_y, tower)
+        $game.add_tower(cell)
+      else
+        $map.create_object(@grid_x, @grid_y, @selection)
+      end unless @selection.nil?
       draw_map_obj
       draw_sidebar
     end

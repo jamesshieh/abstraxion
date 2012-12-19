@@ -50,8 +50,8 @@ module GameStateHelper
 
   # Draws a charge in a specific node
   def draw_charge(x, y, dx, dy)
-    draw_x = dx * $cell_size + x*$node_size + $node_size/2.0
-    draw_y = dy * $cell_size + y*$node_size + $node_size/2.0
+    draw_x = dx*@cell_size + x*$node_size + $node_size/2.0
+    draw_y = dy*@cell_size + y*$node_size + $node_size/2.0
     Charge.create(:x => draw_x, :y => draw_y, :factor_x => @size, :factor_y => @size)
   end
 
