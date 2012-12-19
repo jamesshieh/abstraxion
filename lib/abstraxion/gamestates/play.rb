@@ -1,7 +1,8 @@
 module Abstraxion
   class Play < Master
+
     def initialize
-      @pulse = []
+      @pulse = {}
       @level = 1
       @current_dps = 0
       @dps = []
