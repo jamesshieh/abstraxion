@@ -5,21 +5,21 @@ module Abstraxion
       super
       @types ||= {:basic => :amplifier, :amplifier => :splitter, :splitter => :switcher, :switcher => :basic}
       self.input = {  :escape => :exit,
-                      :space => Play,
+                      :space => MapBuild,
                       :p => Pause,
                       :left_mouse_button => :toggle_connection,
                       :right_mouse_button => :edit_node_type
       }
       @tower_x = 0
       @tower_y = 0
+      scale = 1
+      $node_size = NODE_SIZE.to_int * scale
+      @size = FACTOR * scale
     end
 
     # Basic setup to draw the tower initially when the mode starts
     def setup
       clear_towers
-      scale = 1
-      $node_size = NODE_SIZE.to_int * scale
-      @size = FACTOR * scale
       draw_tower($tower, @tower_x, @tower_y, @size)
       super
     end
@@ -77,7 +77,7 @@ module Abstraxion
       @x_coord = ((@m_x + @tower_x)/$node_size).to_int
       @y_coord = ((@m_y + @tower_y)/$node_size).to_int
       draw_mouse_hover_connection
-      $window.caption = "Edit Mode. FPS #{$window.fps}"
+      $window.caption = "Tower Edit Mode. FPS #{$window.fps}"
     end
   end
 end

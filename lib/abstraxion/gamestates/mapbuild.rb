@@ -5,12 +5,19 @@ module Abstraxion
       super
       self.input = {  :escape => Play,
                       :m => Play,
+                      :space => TowerEdit,
+                      :p => Pause,
                       :left_mouse_button => :build_object,
-                      :right_mouse_button => :edit_select
+                      :right_mouse_button => :edit_select,
+                      :delete => :delete_object
       }
+      scale = 0.10
+      $node_size = NODE_SIZE * scale
+      @cell_size = $node_size * 5
+      @size = FACTOR * scale
       @mouse_x = 0
       @mouse_y = 0
-      @selection = nil
+      @selection ||= nil
     end
 
     def setup
@@ -26,6 +33,12 @@ module Abstraxion
       tower = Marshal.load(Marshal.dump(@selection))
       cell = $map.create_object(@grid_x, @grid_y, tower)
       $game.add_tower(cell) if cell.object.class == MapAbxn::Tower
+      draw_map_obj
+      draw_sidebar
+    end
+
+    def delete_object
+      $map.delete_object(@grid_x, @grid_y)
       draw_map_obj
       draw_sidebar
     end
@@ -60,9 +73,9 @@ module Abstraxion
     end
 
     def draw_sidebar
-      draw_tower($tower1, 1050, 100, 0.1)
-      draw_tower($tower2, 1050, 200, 0.1)
-      draw_tower($tower3, 1050, 300, 0.1)
+      draw_tower($tower1, 1050, 100, @size)
+      draw_tower($tower2, 1050, 200, @size)
+      draw_tower($tower3, 1050, 300, @size)
       MapCellWall.create(:x => 1075, :y => 425)
       MapCellGen.create(:x => 1075, :y => 525)
     end
@@ -73,11 +86,12 @@ module Abstraxion
     end
 
     def update
-      @mouse_x = ($window.mouse_x / $cell_size).to_i * $cell_size + $cell_size / 2.0
-      @mouse_y = ($window.mouse_y / $cell_size).to_i * $cell_size + $cell_size / 2.0
+      @mouse_x = ($window.mouse_x / @cell_size).to_i * @cell_size + @cell_size / 2.0
+      @mouse_y = ($window.mouse_y / @cell_size).to_i * @cell_size + @cell_size / 2.0
       @grid_x = @mouse_x.to_int/50
       @grid_y = @mouse_y.to_int/50
       super
+      $window.caption = "Map Build Mode, FPS: #{$window.fps}"
     end
   end
 end

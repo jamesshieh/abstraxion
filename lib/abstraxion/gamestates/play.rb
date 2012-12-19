@@ -7,13 +7,13 @@ module Abstraxion
       @current_dps = 0
       @dps = []
       scale = 0.10
-      @size = FACTOR * scale
       $node_size = NODE_SIZE * scale
-      $cell_size = $node_size * 5
+      @size = FACTOR * scale
+      @cell_size = $node_size * 5
       super
       self.input = {  :escape => :exit,
-                      :space => TowerEdit,
-                      :m => MapBuild
+                      :m => MapBuild,
+                      :p => Pause
       }
     end
 
@@ -44,8 +44,8 @@ module Abstraxion
       $tower_cells.each_with_index do |cell, i|
         if !@pulse[i].empty?
           shot = @pulse[i].pop
-          shot_x = $cell_size * cell.x
-          shot_y = $cell_size * cell.y
+          shot_x = @cell_size * cell.x
+          shot_y = @cell_size * cell.y
           Pulse.create(shot, { :x => shot_x, :y => shot_y }, [shot_x, shot_y])
         end
       end
@@ -73,7 +73,7 @@ module Abstraxion
       end unless $tower_cells.empty?
       #!@pulse.values.empty? ? dps(@pulse.values.inject(:+)) : dps(0) # TODO:
       #Fix the pulse values to return number instead of object
-      $window.caption = "FPS: #{$window.fps}"
+      $window.caption = "Play Mode, FPS: #{$window.fps}"
     end
   end
 end
