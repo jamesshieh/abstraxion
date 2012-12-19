@@ -16,9 +16,11 @@ module Abstraxion
 
     # Basic setup to draw the tower initially when the mode starts
     def setup
+      clear_towers
       scale = 1
       $node_size = NODE_SIZE.to_int * scale
       @size = FACTOR * scale
+      draw_tower($tower, @tower_x, @tower_y, @size)
       super
     end
 

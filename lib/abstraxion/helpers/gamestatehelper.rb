@@ -13,23 +13,45 @@ module GameStateHelper
     end
   end
 
+  # Draw object in the map
+  def draw_map_obj
+    MapCellWall.destroy_all
+    MapCellGen.destroy_all
+    clear_towers
+    $map.occupied_spaces.each do |cell|
+      x = cell.x
+      y = cell.y
+      case cell.object
+      when MapAbxn::Wall
+        MapCellWall.create(:x => $node_size * 5 * x + $node_size * 5 / 2.0, :y => $node_size * 5 * y + $node_size * 5/2.0)
+      when MapAbxn::Tower
+        draw_tower(cell.object, $node_size * 5 * x, $node_size * 5 * y, 0.1)
+      when MapAbxn::Generator
+        MapCellGen.create(:x => $node_size * 5 * x + $node_size * 5 / 2.0, :y => $node_size * 5 * y + $node_size * 5/2.0)
+      end
+    end
+  end
+
   # Create cursor
   def draw_cursor
     $cursor = Cursor.create(:x => $window.mouse_x, :y=>$window.mouse_y)
   end
 
-  # Iterate through grid and draw charges where they exist
-  def draw_charges
+  def clear_charges
     Charge.destroy_all
-    $tower.grid.grid_iterator.each_with_index do |node, i|
-      draw_charge(i % $tower.y, i / $tower.y) if !node.pulses.empty?
+  end
+
+  # Iterate through grid and draw charges where they exist
+  def draw_charges(tower, dx, dy)
+    tower.grid.grid_iterator.each_with_index do |node, i|
+      draw_charge(i % tower.y, i / tower.y, dx, dy) if !node.pulses.empty?
     end
   end
 
   # Draws a charge in a specific node
-  def draw_charge(x, y)
-    draw_x = x*$node_size + $node_size/2.0
-    draw_y = y*$node_size + $node_size/2.0
+  def draw_charge(x, y, dx, dy)
+    draw_x = dx * $cell_size + x*$node_size + $node_size/2.0
+    draw_y = dy * $cell_size + y*$node_size + $node_size/2.0
     Charge.create(:x => draw_x, :y => draw_y, :factor_x => @size, :factor_y => @size)
   end
 

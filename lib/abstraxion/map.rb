@@ -1,12 +1,12 @@
-module MapAbxn
+module Map
   class Map
     attr_reader :x, :y
 
     include GridHelper
 
     def initialize
-      @x = WINDOW_W / 50
-      @y = WINDOW_H / 50
+      @x = 20
+      @y = 12
       @grid ||= generate_grid
     end
 
@@ -31,7 +31,7 @@ module MapAbxn
     end
 
     def create_object(x, y, object)
-      @grid[y][x] = [x, y, object.class, object]
+      @grid[y][x] = Cell.new(x, y, object)
     end
 
     def delete_object(x, y)
@@ -44,6 +44,15 @@ module MapAbxn
         objects << cell unless cell.nil?
       end
       objects
+    end
+  end
+
+  class Cell
+    attr_accessor :x, :y, :object
+    def initialize(x, y, object)
+      @x = x
+      @y = y
+      @object = object
     end
   end
 end

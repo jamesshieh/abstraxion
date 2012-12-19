@@ -6,8 +6,8 @@ include Abstraxion
 
 ASSET_SIZE = 100
 NODE_SIZE = 100.0
-WINDOW_H = 720
-WINDOW_W = 1280
+WINDOW_H = 700
+WINDOW_W = 1200
 FACTOR = NODE_SIZE/ASSET_SIZE
 
 class Game < Chingu::Window
@@ -23,10 +23,19 @@ class Game < Chingu::Window
     # Set globals
     $size = FACTOR
     $node_size = NODE_SIZE * $size
-    $game = GameWrapper::GameObj.new(5, 5, 10)
-    $tower = $game.tower
+
+    # Initialize game
+    $game = GameWrapper::GameObj.new
+    $tower_cells = $game.tower_cells
     $generator = $game.generator
     $map = $game.map
+    $tower1 = $game.tower1
+    $tower2 = $game.tower2
+    $tower3 = $game.tower3
+    $tower4 = $game.tower4
+    $tower5 = $game.tower5
+    $tower = $tower1
+    $wall = $game.wall
 
     # Start game state
     push_game_state(Menu)
