@@ -10,6 +10,9 @@ module Abstraxion
       @size = FACTOR * scale
       @cell_size = $node_size * 5
       super
+      @tower_delay = 10
+      @wave_delay = 60
+      @level = 1
       self.input = {  :escape => :exit,
                       :m => MapBuild,
                       :p => Pause
@@ -53,6 +56,13 @@ module Abstraxion
     end
 
     def wave
+      if @wave_delay > 60
+        Mob.create({:x => 975, :y => 325}, @level)
+        @wave_delay = 0
+        @level += 1 if rand(0..2)
+      else
+        @wave_delay += 1
+      end
     end
 
     def draw
