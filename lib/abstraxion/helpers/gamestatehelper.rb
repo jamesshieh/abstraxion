@@ -42,7 +42,7 @@ module GameStateHelper
 
   # Create cursor
   def draw_cursor
-    $cursor = Cursor.create(:x => $window.mouse_x, :y=>$window.mouse_y)
+    $cursor = Cursor.create(:x => $window.mouse_x, :y=>$window.mouse_y, :zorder => 100)
   end
 
   def clear_charges
