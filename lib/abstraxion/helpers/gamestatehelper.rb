@@ -1,4 +1,11 @@
 module GameStateHelper
+
+  # Path solver for the monster path
+  def shortest_path
+    pa = AI::AStarAlgorithm.new($map.grid, $map.gen_coordinates)
+    pa.astar
+  end
+
   # World play map drawing grid
   def draw_map
     draw_map_cells($map.x, $map.y)

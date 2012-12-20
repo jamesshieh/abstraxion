@@ -35,7 +35,7 @@ module Abstraxion
 
     def walk
       Fiber.new do
-        direction = @path.shift
+        @path.nil? ? direction = :W : direction = @path.pop
         steps = 50/@velocity
         loop do
           if steps > 0
@@ -55,7 +55,7 @@ module Abstraxion
             end
             steps -= 1
           else
-            direction = @path.shift
+            @path.nil? ? direction = :W : direction = @path.pop
             steps = 50/@velocity
           end
         end

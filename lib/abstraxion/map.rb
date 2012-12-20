@@ -1,6 +1,6 @@
 module Map
   class Map
-    attr_reader :x, :y
+    attr_reader :x, :y, :grid
 
     include GridHelper
 
@@ -9,6 +9,10 @@ module Map
       @y = 12
       @grid ||= generate_grid
       @generator_flag ||= false
+    end
+
+    def gen_coordinates
+      [@gen_x, @gen_y] if generator?
     end
 
     def generator?

@@ -21,6 +21,7 @@ module Abstraxion
 
     # Reset playing field
     def setup
+      @shortest_path ||= shortest_path if $map.generator?
       clear_towers
       draw_map
       draw_map_obj
@@ -57,7 +58,7 @@ module Abstraxion
 
     def wave
       if @wave_delay > 60
-        Mob.create({:x => 975, :y => 325}, @level)
+        Mob.create({:x => 975, :y => 325}, @level, @shortest_path.dup)
         @wave_delay = 0
         @level += 1 if rand(0..2)
       else
@@ -76,7 +77,7 @@ module Abstraxion
 
     # Steps through towers and deterines speed of updates, spawns monsters
     def update
-      wave
+      wave if $map.generator?
       super
       Mob.each_collision(Pulse) { |mob, pulse|
         mob.hit(pulse.damage)
