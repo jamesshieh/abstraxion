@@ -3,7 +3,7 @@ module PulseEngine
   # Basic pulse class
   class Pulse
     attr_accessor :amplitude
-    def initialize(amplitude = 1.0)
+    def initialize(amplitude = 5.0)
       @amplitude = amplitude
     end
     def amplify(magnitude)
