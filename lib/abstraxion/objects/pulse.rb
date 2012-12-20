@@ -5,9 +5,9 @@ module Abstraxion
     traits :collision_detection
     def initialize(pulse, options = {}, origin)
       super(options.merge(:image=>Image["pulse.png"]))
+      self.zorder = ZOrder::Pulse
       @origin_x, @origin_y = origin
       @pulse = pulse
-      @zorder = 30
       @target_x = $window.mouse_x
       @target_y = $window.mouse_y
       @slope = (@origin_y - @target_y)/(@target_x - @origin_x)

@@ -8,7 +8,7 @@ module Abstraxion
     include HPBarHelper
 
     def initialize(options = {}, level = 1, path = [:W,:N,:W,:S,:E,:W,:N,:N,:W,:W,:W,:W,:W,:W,:W,:W,:W,:W,:W,:W])
-      @zorder = 40
+      self.zorder = ZOrder::Monster
       @path = path
       @level = level
       @hp = 1 + @level

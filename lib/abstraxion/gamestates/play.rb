@@ -12,6 +12,7 @@ module Abstraxion
       super
       @tower_delay = 10
       @wave_delay = 60
+      @spawns = 0
       @level = 1
       self.input = {  :escape => :exit,
                       :m => MapBuild,
@@ -51,7 +52,7 @@ module Abstraxion
           shot = @pulse[i].pop
           shot_x = @cell_size * cell.x
           shot_y = @cell_size * cell.y
-          Pulse.create(shot, { :x => shot_x, :y => shot_y }, [shot_x, shot_y])
+          Pulse.create(shot, { :x => shot_x, :y => shot_y , :zorder => 12}, [shot_x, shot_y])
         end
       end
     end
@@ -60,19 +61,25 @@ module Abstraxion
       if @wave_delay > 60
         Mob.create({:x => 975, :y => 325}, @level, @shortest_path.dup)
         @wave_delay = 0
-        @level += 1 if rand(0..2)
+        if @spawns > 10
+          @wave_delay = -240
+          @level += 1
+          @spawns = 0
+        else
+          @spawns += 1
+        end
       else
         @wave_delay += 1
       end
     end
 
     def draw
+      super
       clear_charges
       $tower_cells.each do |cell|
         draw_charges(cell.object, cell.x, cell.y)
       end unless $tower_cells.empty?
       draw_pulses
-      super
     end
 
     # Steps through towers and deterines speed of updates, spawns monsters
@@ -94,7 +101,7 @@ module Abstraxion
           mob.destroy
         end
       end
-      if @tower_delay >= 10
+      if @tower_delay >= 5
         $generator.update
         $tower_cells.each_with_index do |cell, i|
           @pulse[i] = cell.object.update
