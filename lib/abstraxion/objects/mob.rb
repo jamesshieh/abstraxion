@@ -2,10 +2,19 @@ module Abstraxion
   class Mob < GameObject
     trait :bounding_circle
     traits :collision_detection
-    def initialize(options = {})
+
+    attr_reader :level
+
+    include HPBarHelper
+
+    def initialize(options = {}, level = 1, path = [:W,:N,:W,:S,:E,:W,:N,:N,:W,:W,:W,:W,:W,:W,:W,:W,:W,:W,:W,:W])
       @zorder = 40
-      @hp = 10.0
+      @path = path
+      @level = level
+      @hp = 1 + @level
       @maxhp = @hp
+      @velocity = 1
+      @walk ||= walk
       @hpbar = HPBar.create({}, self)
       super(options.merge(:image => Image["poring.png"]))
       cache_bounding_circle
@@ -16,15 +25,6 @@ module Abstraxion
       @hpbar.destroy
     end
 
-    def hp
-      @hp
-    end
-
-    def hp_bar_remaining
-      val = (@hp/@maxhp * 4.0).to_i
-      val.between?(0, 4) ? val : 0
-    end
-
     def hit(damage)
       @hp -= damage
     end
@@ -33,9 +33,37 @@ module Abstraxion
       @hp > 0
     end
 
+    def walk
+      Fiber.new do
+        direction = @path.shift
+        steps = 50/@velocity
+        loop do
+          if steps > 0
+            case direction
+            when :N
+              @y -= @velocity
+              Fiber.yield
+            when :S
+              @y += @velocity
+              Fiber.yield
+            when :E
+              @x += @velocity
+              Fiber.yield
+            when :W
+              @x -= @velocity
+              Fiber.yield
+            end
+            steps -= 1
+          else
+            direction = @path.shift
+            steps = 50/@velocity
+          end
+        end
+      end
+    end
+
     def update
-      destroy unless alive?
-      @x -= 1
+      @walk.resume
     end
   end
 end

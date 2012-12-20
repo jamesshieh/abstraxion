@@ -3,7 +3,6 @@ module Abstraxion
 
     def initialize
       @pulse = {}
-      @level = 1
       @current_dps = 0
       @dps = []
       scale = 0.10
