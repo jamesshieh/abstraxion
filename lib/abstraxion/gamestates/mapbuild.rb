@@ -88,7 +88,7 @@ module Abstraxion
       draw_tower($tower2, 1050, 200, @size)
       draw_tower($tower3, 1050, 300, @size)
       MapCellWall.create(:x => 1075, :y => 425)
-      MapCellGen.create(:x => 1075, :y => 525)
+      MapCellPreviewGen.create(:x => 1075, :y => 525)
     end
 
     def draw

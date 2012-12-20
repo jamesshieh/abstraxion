@@ -2,12 +2,15 @@ module MapAbxn
 
   # A map level generator that creates pulses in set intervals
   class Generator
-    def initialize(delay = 10)
+    attr_reader :hp, :maxhp, :exp_left, :level, :connections
+
+    def initialize(delay = 4)
       @delay = delay
-      @maxhp = 1000
-      @hp = 1000
-      @level = 0
-      @connections = { 0 => nil, 1 => nil, 2 => nil }
+      @hp = 100.0
+      @maxhp = @hp
+      @level = 1
+      @exp_left = 5
+      @connections = { 0 => nil }
     end
 
     # Default connection
@@ -20,12 +23,30 @@ module MapAbxn
       end
     end
 
+    def status
+      [@hp, @maxhp]
+    end
+
+    # Take a hit worth x damage
+    def hit(damage)
+      @hp -= damage
+    end
+
+    # Gain experience
+    def gain_exp(exp)
+      @exp_left -= exp
+      if @exp_left < 0
+        level_up
+        @exp_left = 5 + @level * 3
+      end
+    end
+
     # Level up the generator, each level adds one possible connection
     def level_up
       @level += 1
-      @maxhp = 1000 + @level * 100
+      @maxhp = 100 + @level * 12
       @hp = @maxhp
-      @connections[@level] = nil
+      @connections[@level/5] = nil if @level % 5 == 0
     end
 
     # Connect tower to the generator
@@ -40,12 +61,12 @@ module MapAbxn
 
     # Marshal dump func for saving
     def marshal_dump
-      [@delay, @hp, @level, @connections]
+      [@delay, @hp, @maxhp, @level, @connections, @exp_left]
     end
 
     # Marshal load func for loading
     def marshal_load array
-      @delay, @hp, @level, @connections = array
+      @delay, @hp, @maxhp, @level, @connections, @exp_left = array
     end
 
     # Generates a new pulse
@@ -74,9 +95,9 @@ module MapAbxn
     # Steps the generator forward and pulses if needed
     def update
       pulse = generate_pulse.resume
-      @connections[0].pulse(pulse) if pulse && !@connections[0].nil?
-      @connections[1].pulse(PulseEngine::Pulse.new) if pulse && !@connections[1].nil?
-      @connections[2].pulse(PulseEngine::Pulse.new) if pulse && !@connections[2].nil?
+      @connections.values.each do |connection|
+        connection.pulse(PulseEngine::Pulse.new) if pulse && !connection.nil?
+      end
     end
   end
 

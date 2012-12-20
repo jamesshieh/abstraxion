@@ -17,6 +17,7 @@ module GameStateHelper
   def draw_map_obj
     MapCellWall.destroy_all
     MapCellGen.destroy_all
+    HPBar.destroy_all
     clear_towers
     $map.occupied_spaces.each do |cell|
       x = cell.x

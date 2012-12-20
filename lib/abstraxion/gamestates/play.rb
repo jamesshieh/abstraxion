@@ -67,14 +67,36 @@ module Abstraxion
 
     # Steps through towers and deterines speed of updates, spawns monsters
     def update
+      wave
       super
+      Mob.each_collision(Pulse) { |mob, pulse|
+        mob.hit(pulse.damage)
+        pulse.destroy
+      }
+      Mob.each_collision(MapCellGen) { |mob, gen|
+        gen.hit(mob.hp)
+        mob.destroy
+      }
       Pulse.select { |obj| obj.outside_window? }.each(&:destroy)
-      $generator.update
-      $tower_cells.each_with_index do |cell, i|
-        @pulse[i] = cell.object.update
-      end unless $tower_cells.empty?
+      Mob.each do |mob|
+        if !mob.alive?
+          $generator.gain_exp(mob.level)
+          mob.destroy
+        end
+      end
+      if @tower_delay >= 10
+        $generator.update
+        $tower_cells.each_with_index do |cell, i|
+          @pulse[i] = cell.object.update
+        end unless $tower_cells.empty?
+        @tower_delay = 0
+      else
+        @tower_delay += 1
+      end
+      push_game_state(GameOver) unless $generator.alive?
       #!@pulse.values.empty? ? dps(@pulse.values.inject(:+)) : dps(0) # TODO:
       #Fix the pulse values to return number instead of object
+      @status.text = "Gen Level: #{$generator.level}, Gen HP: #{$generator.hp}, Exp to Next: #{$generator.exp_left}, Connections Avail: #{$generator.connections.length}"
       $window.caption = "Play Mode, FPS: #{$window.fps}"
     end
   end
