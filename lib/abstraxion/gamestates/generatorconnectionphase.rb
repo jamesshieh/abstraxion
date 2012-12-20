@@ -11,6 +11,7 @@ module Abstraxion
       @cell_size = $node_size * 5
       @size = FACTOR * scale
       @color = Gosu::Color.new(50,255,255,255)
+      @controls = Chingu::Text.create(:text => "Click on the generator and the tower you wish to connect.", :x => 100, :y => 635, :size => 30)
     end
 
     def toggle_connection

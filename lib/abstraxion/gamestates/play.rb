@@ -27,6 +27,8 @@ module Abstraxion
       end unless $tower_cells.empty?
       Mob.destroy_all
       Pulse.destroy_all
+      @controls = Chingu::Text.create(:text => "Press 'm' for building mode, 'p' to pause", :x => 100, :y => 615, :size => 30)
+      @status = Chingu::Text.create(:text => "Gen Level: #{$generator.level}, Gen HP: #{$generator.hp}, Exp to Next: #{$generator.exp_left}, Connections Avail: #{$generator.connections.length}", :x => 100, :y => 666, :size => 20)
       super
     end
 

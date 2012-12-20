@@ -4,8 +4,7 @@ module Abstraxion
     def initialize
       super
       @types ||= {:basic => :amplifier, :amplifier => :splitter, :splitter => :switcher, :switcher => :basic}
-      self.input = {  :escape => :exit,
-                      :space => MapBuild,
+      self.input = {  :t => MapBuild,
                       :p => Pause,
                       :left_mouse_button => :toggle_connection,
                       :right_mouse_button => :edit_node_type
@@ -15,6 +14,8 @@ module Abstraxion
       scale = 1
       $node_size = NODE_SIZE.to_int * scale
       @size = FACTOR * scale
+      @controls = Chingu::Text.create(:text => "Press 't' to return to build mode", :x => 100, :y => 635, :size => 30)
+
     end
 
     # Basic setup to draw the tower initially when the mode starts

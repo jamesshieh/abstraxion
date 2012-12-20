@@ -2,20 +2,21 @@ module Abstraxion
   class MapBuild < Master
 
     def initialize
+      scale = 0.10
+      $node_size = NODE_SIZE * scale
+      @cell_size = $node_size * 5
+      @size = FACTOR * scale
       super
+      @selection ||= nil
+      @controls = Chingu::Text.create(:text => "Press 't' to edit currently selected tower, 'm' to resume play, 'p' to pause.", :x => 100, :y => 635, :size => 30)
       self.input = {  :escape => Play,
                       :m => Play,
-                      :space => TowerEdit,
+                      :t => TowerEdit,
                       :p => Pause,
                       :left_mouse_button => :mouse_event,
                       :right_mouse_button => :edit_select,
                       :delete => :delete_object
       }
-      scale = 0.10
-      $node_size = NODE_SIZE * scale
-      @cell_size = $node_size * 5
-      @size = FACTOR * scale
-      @selection ||= nil
     end
 
     def setup
