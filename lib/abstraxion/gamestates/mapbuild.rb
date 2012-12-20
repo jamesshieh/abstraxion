@@ -33,7 +33,7 @@ module Abstraxion
         build_object
       elsif $map.get_type(@grid_x, @grid_y) == MapAbxn::Generator
         push_game_state(GeneratorConnectionPhase)
-      end
+      end if @grid_x.between?(0, $map.x-1) && @grid_y.between?(0, $map.y-1)
     end
 
     def build_object
