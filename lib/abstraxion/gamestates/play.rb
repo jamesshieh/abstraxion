@@ -10,8 +10,9 @@ module Abstraxion
       @size = FACTOR * scale
       @cell_size = $node_size * 5
       super
-      @tower_delay = 10
-      @wave_delay = 60
+      @tower_delay = 60 #always update on first frame or else pulse hash not initialized
+      @wave_delay = DELAY_BETWEEN_WAVES
+      @wave_counter = @wave_delay
       @spawns = 0
       @level = 1
       self.input = {  :escape => :exit,
@@ -57,19 +58,20 @@ module Abstraxion
       end
     end
 
+    # Create a wave of 10 monsters
     def wave
-      if @wave_delay > 60
+      if @wave_counter > DELAY_BETWEEN_MONSTERS
         Mob.create({:x => 975, :y => 325}, @level, @shortest_path.dup)
-        @wave_delay = 0
-        if @spawns > 10
-          @wave_delay = -240
+        @wave_counter = 0
+        if @spawns > MONSTERS_PER_WAVE
+          @wave_counter = -(@wave_delay)
           @level += 1
           @spawns = 0
         else
           @spawns += 1
         end
       else
-        @wave_delay += 1
+        @wave_counter += 1
       end
     end
 
@@ -101,7 +103,7 @@ module Abstraxion
           mob.destroy
         end
       end
-      if @tower_delay >= 5
+      if @tower_delay >= TOWER_UPDATE_INTERVAL
         $generator.update
         $tower_cells.each_with_index do |cell, i|
           @pulse[i] = cell.object.update
