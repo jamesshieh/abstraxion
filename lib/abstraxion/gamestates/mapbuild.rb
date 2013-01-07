@@ -49,7 +49,7 @@ module Abstraxion
     end
 
     def delete_object
-      $map.delete_object(@grid_x, @grid_y)
+      $map.delete_object(@grid_x, @grid_y) unless $map.get_type(@grid_x, @grid_y).nil?
       draw_map_obj
       draw_sidebar
     end
