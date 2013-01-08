@@ -3,6 +3,8 @@ Abstraxion v0.4
 
 Abstraxion is a game based around the concept of abstraction.
 
+![Screen shot of v0.4](https://raw.github.com/jamesshieh/abstraxion/media/screenshots/preview.png)
+
 ### Dependencies
 
 Please see https://github.com/jlnr/gosu/wiki and check in the sidebar for your
