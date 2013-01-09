@@ -114,7 +114,6 @@ module MapAbxn
     def initialize(x, y)
       @x, @y = x, y
       @grid = TowerAbxn::Grid.new(x, y)
-      @pulses = []
     end
 
     def marshal_load array

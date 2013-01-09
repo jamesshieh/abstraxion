@@ -24,16 +24,21 @@ module Abstraxion
     # Reset playing field
     def setup
       @shortest_path ||= shortest_path if $map.generator?
-      clear_towers
-      draw_map
-      draw_map_obj
+
       $tower_cells.each do |cell|
         cell.object.reset
       end unless $tower_cells.empty?
+      clear_towers
       Mob.destroy_all
       Pulse.destroy_all
+
+      draw_map
+      draw_map_obj
+
+      # Create screen text
       @controls = Chingu::Text.create(:text => "Press 'm' for building mode, 'p' to pause", :x => 100, :y => 615, :size => 30)
       @status = Chingu::Text.create(:text => "Gen Level: #{$generator.level}, Gen HP: #{$generator.hp}, Exp to Next: #{$generator.exp_left}, Connections Avail: #{$generator.connections.length}", :x => 100, :y => 666, :size => 20)
+
       super
     end
 
@@ -48,14 +53,14 @@ module Abstraxion
 
     # Creates shots out of the tower when a pulse returns
     def draw_pulses
-      $tower_cells.each_with_index do |cell, i|
+      for i in (0..$tower_cells.length - 1)
         if !@pulse[i].empty?
           shot = @pulse[i].pop
           shot_x = @cell_size * cell.x
           shot_y = @cell_size * cell.y
           Pulse.create(shot, { :x => shot_x, :y => shot_y , :zorder => 12}, [shot_x, shot_y])
         end
-      end
+      end unless @pulse.empty?
     end
 
     # Create a wave of 10 monsters
@@ -63,7 +68,7 @@ module Abstraxion
       if @wave_counter > DELAY_BETWEEN_MONSTERS
         Mob.create({:x => 975, :y => 325}, @level, @shortest_path.dup)
         @wave_counter = 0
-        if @spawns > MONSTERS_PER_WAVE
+        if @spawns >= MONSTERS_PER_WAVE
           @wave_counter = -(@wave_delay)
           @level += 1
           @spawns = 0
@@ -105,7 +110,7 @@ module Abstraxion
       end
       if @tower_delay >= TOWER_UPDATE_INTERVAL
         $generator.update
-        $tower_cells.each_with_index do |cell, i|
+        $tower_cells.each_with_index  do |cell, i|
           @pulse[i] = cell.object.update
         end unless $tower_cells.empty?
         @tower_delay = 0
