@@ -1,4 +1,5 @@
 module AI
+  # AStar implementation for finding the shortest path
   class AStarAlgorithm
     def initialize(map_grid, end_node, start_node = [19,6])
       @end_x, @end_y = end_node
@@ -8,6 +9,7 @@ module AI
       @x = @flagged_grid[0].length
     end
 
+    # Creates a grid with new node struct
     def generate_flagged_grid(map_grid)
       flagged_grid = []
       map_grid.each_with_index do |row, y|
@@ -88,19 +90,23 @@ module AI
     end
   end
 
+  # Priority Queue implementation
   class PriorityQueue
     def initialize(nodes = [])
       @nodes = nodes
     end
 
+    # Returns of empty
     def empty?
       @nodes.empty?
     end
 
+    # Push object onto queue
     def push(obj)
       @nodes << obj
     end
 
+    # Finds the lowest score node and pops it
     def find_and_pop_best
       min = @nodes[0]
       @nodes.each do |node|
@@ -111,15 +117,18 @@ module AI
       pop(min)
     end
 
+    # Finds a specific node
     def find(node)
       @nodes.find {|x| x == node}
     end
 
+    # Pop a specific node
     def pop(node)
       @nodes.delete(find(node))
     end
   end
 
+  # Node class for Astar
   class Node
     attr_reader :x, :y, :n, :s, :e, :w, :cost, :g, :h, :f, :parent
     def initialize(cost,coords,goal)
@@ -135,12 +144,18 @@ module AI
       @w = nil
       @parent = nil
     end
+
+    # Return all neighbors
     def neighbors
       [@n,@s,@e,@w].select { |x| !x.nil? }
     end
+
+    # Set the parent node
     def set_parent(node)
       @parent = node
     end
+
+    # Evaluate a new gscore based on place in algorithm
     def g_score(previous_g)
       @g = previous_g + @cost
       @f = @g + @h
