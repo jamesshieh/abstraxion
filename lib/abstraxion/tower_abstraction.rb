@@ -159,8 +159,9 @@ module TowerAbxn
       if !@pulses.empty?
         pulse = aggregate_pulses(@pulses)
         instruct = @nodeabxn.send_and_receive_pulse(pulse)
-        instruct.each do |key, value|
-          @neighbors[key].receive_pulse(value)
+        instruct.each do |direction, pulse|
+          pulse.set_direction(direction)
+          @neighbors[direction].receive_pulse(pulse)
         end
       end
       nil
@@ -221,8 +222,9 @@ module TowerAbxn
     def send_pulse
       if !@zero_pulse.nil?
         instruct = @nodeabxn.send_and_receive_pulse(@zero_pulse)
-        instruct.each do |key, value|
-          @neighbors[key].receive_pulse(value)
+        instruct.each do |direction, pulse|
+          pulse.set_direction(direction)
+          @neighbors[direction].receive_pulse(pulse)
         end
         @zero_pulse = nil
       end
