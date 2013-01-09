@@ -82,10 +82,6 @@ module Abstraxion
 
     def draw
       super
-      clear_charges
-      $tower_cells.each do |cell|
-        draw_charges(cell.object, cell.x, cell.y)
-      end unless $tower_cells.empty?
       draw_pulses
     end
 
@@ -112,6 +108,10 @@ module Abstraxion
         $generator.update
         $tower_cells.each_with_index  do |cell, i|
           @pulse[i] = cell.object.update
+        end unless $tower_cells.empty?
+        clear_charges
+        $tower_cells.each do |cell|
+          draw_charges(cell.object, cell.x, cell.y)
         end unless $tower_cells.empty?
         @tower_delay = 0
       else

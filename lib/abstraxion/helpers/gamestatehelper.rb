@@ -52,15 +52,17 @@ module GameStateHelper
   # Iterate through grid and draw charges where they exist
   def draw_charges(tower, dx, dy)
     tower.grid.grid_iterator.each_with_index do |node, i|
-      draw_charge(i % tower.y, i / tower.y, dx, dy) if !node.pulses.empty?
+      node.pulses.each do |pulse|
+        draw_charge(i % tower.y, i / tower.y, dx, dy, pulse)
+      end unless node.pulses.empty?
     end
   end
 
   # Draws a charge in a specific node
-  def draw_charge(x, y, dx, dy)
+  def draw_charge(x, y, dx, dy, pulse)
     draw_x = dx*@cell_size + x*$node_size + $node_size/2.0
     draw_y = dy*@cell_size + y*$node_size + $node_size/2.0
-    Charge.create(:x => draw_x, :y => draw_y, :factor_x => @size, :factor_y => @size)
+    Charge.create({:x => draw_x, :y => draw_y, :factor_x => @size, :factor_y => @size}, pulse)
   end
 
   # Clears all tower objects

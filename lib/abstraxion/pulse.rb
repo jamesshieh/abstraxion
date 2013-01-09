@@ -5,7 +5,17 @@ module PulseEngine
     attr_accessor :amplitude
     def initialize(amplitude = 5.0)
       @amplitude = amplitude
+      @direction = nil
     end
+
+    def direction
+      @direction
+    end
+
+    def set_direction(direction)
+      @direction = direction
+    end
+
     def amplify(magnitude)
       @amplitude = @amplitude * magnitude
       self
