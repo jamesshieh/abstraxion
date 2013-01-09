@@ -4,6 +4,7 @@ module Map
 
     include GridHelper
 
+    # Initialize map size and create empty grid
     def initialize
       @x = 20
       @y = 12
@@ -11,14 +12,17 @@ module Map
       @generator_flag ||= false
     end
 
+    # Return the coordinates of a generator if one exists
     def gen_coordinates
       [@gen_x, @gen_y] if generator?
     end
 
+    # Return if a generator has been created in the map
     def generator?
       @generator_flag
     end
 
+    # Create an empty grid x x y in size
     def generate_grid
       grid = []
       @y.times do
@@ -31,18 +35,22 @@ module Map
       grid
     end
 
+    # Marshal dump class for saving
     def marshal_dump
       [@x, @y, @grid, @generator_pointer]
     end
 
+    # Marshal load class for loading
     def marshal_load array
       @x, @y, @grid, @generator_pointer = array
     end
 
+    # Returns a cell
     def get_cell(x, y)
       @grid[y][x]
     end
 
+    # Creates an object and sets generator flag when generator is created
     def create_object(x, y, object)
       case object
       when MapAbxn::Generator
@@ -56,11 +64,13 @@ module Map
       end
     end
 
+    # Delete an object if it exists and flip any flags
     def delete_object(x, y)
       @generator_flag = false if @grid[y][x].object.class == MapAbxn::Generator
       @grid[y][x] = nil
     end
 
+    # Get the type of the cell
     def get_type(x, y)
       if @grid[y][x].nil?
         return nil
@@ -69,6 +79,7 @@ module Map
       end
     end
 
+    # Returns an iterator with only occupied grid spaces
     def occupied_spaces
       objects = []
       grid_iterator.each do |cell|
@@ -78,6 +89,7 @@ module Map
     end
   end
 
+  # Cell object that contains coordinates and the object at that location
   class Cell
     attr_accessor :x, :y, :object
     def initialize(x, y, object)
