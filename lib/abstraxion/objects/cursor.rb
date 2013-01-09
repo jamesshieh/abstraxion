@@ -1,8 +1,8 @@
 module Abstraxion
   class Cursor < GameObject
     def initialize(options = {})
-      super(options.merge(:image => Image["cursor.png"]))
       self.zorder = ZOrder::Cursor
+      super(options.merge(:image => Image["cursor.png"]))
       @zorder = 1000
     end
     def update
