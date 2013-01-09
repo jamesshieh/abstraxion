@@ -7,8 +7,9 @@ module Abstraxion
 
     include HPBarHelper
 
-    def initialize(options = {}, level = 1, path = [:W,:N,:W,:S,:E,:W,:N,:N,:W,:W,:W,:W,:W,:W,:W,:W,:W,:W,:W,:W])
+    def initialize(options = {}, level = 1, path)
       self.zorder = ZOrder::Monster
+      super(options.merge(:image => Image["poring.png"]))
       @path = path
       @level = level
       @hp = 1 + @level
@@ -16,7 +17,6 @@ module Abstraxion
       @velocity = 1
       @walk ||= walk
       @hpbar = HPBar.create({}, self)
-      super(options.merge(:image => Image["poring.png"]))
       cache_bounding_circle
     end
 

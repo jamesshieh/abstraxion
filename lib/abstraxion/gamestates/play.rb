@@ -53,7 +53,7 @@ module Abstraxion
 
     # Creates shots out of the tower when a pulse returns
     def draw_pulses
-      for i in (0..$tower_cells.length - 1)
+      $tower_cells.each_with_index do |cell, i|
         if !@pulse[i].empty?
           shot = @pulse[i].pop
           shot_x = @cell_size * cell.x
