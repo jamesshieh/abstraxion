@@ -8,8 +8,8 @@ module Abstraxion
     include HPBarHelper
 
     def initialize(options = {}, level = 1, path)
-      self.zorder = ZOrder::Monster
       super(options.merge(:image => Image["poring.png"]))
+      self.zorder = ZOrder::Monster
       @path = path
       @level = level
       @hp = 1 + @level

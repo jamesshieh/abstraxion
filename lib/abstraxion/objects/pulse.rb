@@ -4,8 +4,8 @@ module Abstraxion
     trait :bounding_circle
     traits :collision_detection
     def initialize(pulse, options = {}, origin)
-      self.zorder = ZOrder::Pulse
       super(options.merge(:image=>Image["pulse.png"]))
+      self.zorder = ZOrder::Pulse
       @origin_x, @origin_y = origin
       @pulse = pulse
       @target_x = $window.mouse_x

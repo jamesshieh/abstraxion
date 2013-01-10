@@ -4,8 +4,8 @@ module Abstraxion
     include ObjectHelper
 
     def initialize(options = {})
-      self.zorder = ZOrder::Grid
       super(options.merge(:image => Image["mapcellempty.png"]))
+      self.zorder = ZOrder::Grid
     end
   end
 
@@ -14,15 +14,15 @@ module Abstraxion
     include ObjectHelper
 
     def initialize(options = {})
-      self.zorder = ZOrder::Hover
       super(options.merge(:image => Image["mapcellhover.png"]))
+      self.zorder = ZOrder::Hover
     end
   end
 
   class MapCellPreviewGen < GameObject
     def initialize(options = {})
-      self.zorder = ZOrder::Generator
       super(options.merge(:image => Image["mapcellgen.png"]))
+      self.zorder = ZOrder::Generator
     end
   end
 
@@ -35,9 +35,9 @@ module Abstraxion
 
     def initialize(options = {})
       @hpbar = HPBar.create({}, self)
-      self.zorder = ZOrder::Generator
       @hp, @maxhp = $generator.status
       super(options.merge(:image => Image["mapcellgen.png"]))
+      self.zorder = ZOrder::Generator
     end
 
     def hit(damage = 10)
@@ -59,8 +59,8 @@ module Abstraxion
     include ObjectHelper
 
     def initialize(options = {})
-      self.zorder = ZOrder::Wall
       super(options.merge(:image => Image["mapcellwall.png"]))
+      self.zorder = ZOrder::Wall
     end
   end
 
@@ -69,8 +69,8 @@ module Abstraxion
     include ObjectHelper
 
     def initialize(options = {})
-      self.zorder = ZOrder::Hover
       super(options.merge(:image => Image["editselection.png"]))
+      self.zorder = ZOrder::Hover
     end
   end
 end

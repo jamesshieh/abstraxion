@@ -1,8 +1,8 @@
 module Abstraxion
   class HPBar < GameObject
     def initialize(options = {}, object)
-      self.zorder = ZOrder::HPBar
       super(options.merge(:image => Image["hpbar4.png"]))
+      self.zorder = ZOrder::HPBar
       @object = object
     end
     def update

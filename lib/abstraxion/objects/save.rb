@@ -5,7 +5,7 @@ module Abstraxion
 
     def initialize(options = {})
       super(options.merge(:image => Image["save.png"]))
-      @zorder = ZOrder::Hover
+      self.zorder = ZOrder::Hover
     end
 
     def update

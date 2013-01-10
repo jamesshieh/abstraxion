@@ -1,8 +1,8 @@
 module Abstraxion
   class Charge < GameObject
     def initialize(options = {}, pulse)
-      self.zorder = ZOrder::Charge
       super(options.merge(:image => Image["charge.png"]))
+      self.zorder = ZOrder::Charge
       @pulse = pulse
       @move_direction ||= @pulse.direction
       case @move_direction
@@ -34,8 +34,8 @@ module Abstraxion
 
   class Node < GameObject
     def initialize(options = {}, type)
-      self.zorder = ZOrder::Node
       super(options.merge(:image => Image[type.to_s + ".png"]))
+      self.zorder = ZOrder::Node
     end
   end
 end
