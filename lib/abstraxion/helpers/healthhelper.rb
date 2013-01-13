@@ -1,4 +1,8 @@
 module HPBarHelper
+  def create_hpbar
+    @hpbar ||= HPBar.create({}, self)
+  end
+
   def maxhp
     @maxhp
   end

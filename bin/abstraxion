@@ -26,6 +26,7 @@ class Game < Chingu::Window
     super(WINDOW_W, WINDOW_H, false)
 
     # Set globals
+    $hp_flag = true
     $size = FACTOR
     $node_size = NODE_SIZE * $size
 

@@ -17,7 +17,8 @@ module Abstraxion
       @level = 1
       self.input = {  :escape => :exit,
                       :m => MapBuild,
-                      :p => Pause
+                      :p => Pause,
+                      :u => :toggle_hp
       }
     end
 

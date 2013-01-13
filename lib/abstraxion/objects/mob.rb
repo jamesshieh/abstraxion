@@ -16,7 +16,7 @@ module Abstraxion
       @maxhp = @hp
       @velocity = 1
       @walk ||= walk
-      @hpbar = HPBar.create({}, self)
+      create_hpbar
       cache_bounding_circle
     end
 

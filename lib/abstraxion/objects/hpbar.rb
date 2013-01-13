@@ -6,7 +6,7 @@ module Abstraxion
       @object = object
     end
     def update
-      @image = Image["hpbar" + @object.hp_bar_remaining.to_s + ".png"]
+      $hp_flag ? @image = Image["hpbar" + @object.hp_bar_remaining.to_s + ".png"] : @image = Image["invisible.png"]
       @x = @object.x
       @y = @object.y - 30
     end

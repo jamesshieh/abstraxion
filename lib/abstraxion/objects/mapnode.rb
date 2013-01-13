@@ -34,8 +34,8 @@ module Abstraxion
     include ObjectHelper
 
     def initialize(options = {})
-      @hpbar = HPBar.create({}, self)
       @hp, @maxhp = $generator.status
+      create_hpbar
       super(options.merge(:image => Image["mapcellgen.png"]))
       self.zorder = ZOrder::Generator
     end

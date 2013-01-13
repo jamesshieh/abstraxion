@@ -1,5 +1,10 @@
 module GameStateHelper
 
+  # toggle hp bars on and off
+  def toggle_hp
+    $hp_flag ? $hp_flag = false : $hp_flag = true
+  end
+
   # Path solver for the monster path
   def shortest_path
     pa = AI::AStarAlgorithm.new($map.grid, $map.gen_coordinates)
