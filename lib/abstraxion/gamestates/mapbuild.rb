@@ -8,7 +8,17 @@ module Abstraxion
       @size = FACTOR * scale
       super
       @selection ||= nil
-      @controls = Chingu::Text.create(:text => "Press 't' to edit currently selected tower, 'm' to resume play, 'p' to pause.", :x => 100, :y => 635, :size => 30)
+
+      @sidebar_controls1 = Chingu::Text.create(:text => "Right click to select a tower", :x => 1000, :y => 10, :size => 15)
+      @sidebar_controls2 = Chingu::Text.create(:text => "Left click to place", :x => 1000, :y => 25, :size => 15)
+      @sidebar_controls3 = Chingu::Text.create(:text => "\"Delete\" to remove", :x => 1000, :y => 40, :size => 15)
+      @sidebar_controls4 = Chingu::Text.create(:text => "Click GEN then a tower to power", :x => 1000, :y => 55, :size => 15)
+      @sidebar_label_tower1 = Chingu::Text.create(:text => "Tower 1", :x => 1050, :y => 80, :size => 15)
+      @sidebar_label_tower2 = Chingu::Text.create(:text => "Tower 2", :x => 1050, :y => 180, :size => 15)
+      @sidebar_label_tower3 = Chingu::Text.create(:text => "Tower 3", :x => 1050, :y => 280, :size => 15)
+      @sidebar_label_gen = Chingu::Text.create(:text => "Generator(req)", :x => 1040, :y => 380, :size => 15)
+      @sidebar_label_wall = Chingu::Text.create(:text => "Wall", :x => 1055, :y => 480, :size => 15)
+      @controls = Chingu::Text.create(:text => "Press 't' to edit currently selected tower, 'm or esc' to resume play, 'p' to pause.", :x => 100, :y => 635, :size => 30)
       self.input = {  :escape => Play,
                       :m => Play,
                       :t => TowerEdit,

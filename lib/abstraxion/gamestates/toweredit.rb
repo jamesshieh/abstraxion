@@ -5,17 +5,24 @@ module Abstraxion
       super
       @types ||= {:basic => :amplifier, :amplifier => :splitter, :splitter => :switcher, :switcher => :basic}
       self.input = {  :t => MapBuild,
+                      :esc => MapBuild,
                       :p => Pause,
                       :left_mouse_button => :toggle_connection,
                       :right_mouse_button => :edit_node_type
       }
+      @black = Color.rgb(0,0,0)
       @tower_x = 0
       @tower_y = 0
       scale = 1
       $node_size = NODE_SIZE.to_int * scale
       @size = FACTOR * scale
-      @controls = Chingu::Text.create(:text => "Press 't' to return to build mode", :x => 100, :y => 635, :size => 30)
-
+      @controls1 = Chingu::Text.create(:text => "Press 't' or 'esc' to return to build mode", :x => 100, :y => 620, :size => 30)
+      @controls2 = Chingu::Text.create(:text => "Left click to toggle a connection on or off, right click to change node type", :x => 100, :y => 655, :size => 20)
+      @tower_nodes1 = Chingu::Text.create(:text => "Node Types:", :x => 600, :y => 50, :size => 20, :color => @black)
+      @tower_nodes2 = Chingu::Text.create(:text => "AM - Amplifies a pulse 20%", :x => 600, :y => 100, :size => 20,:color => @black)
+      @tower_nodes3 = Chingu::Text.create(:text => "SW - Switches between outputs", :x => 600, :y => 150, :size => 20,:color => @black)
+      @tower_nodes4 = Chingu::Text.create(:text => "SP - Reduces overall power by 10% and", :x => 600, :y => 200, :size => 20,:color => @black)
+      @tower_nodes4 = Chingu::Text.create(:text => "divides between multiple outputs", :x => 620, :y => 220, :size => 20,:color => @black)
     end
 
     # Basic setup to draw the tower initially when the mode starts
