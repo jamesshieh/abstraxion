@@ -3,7 +3,13 @@ Abstraxion v0.4
 
 Abstraxion is a game based around the concept of abstraction.
 
-![Screen shot of v0.4](https://raw.github.com/jamesshieh/abstraxion/master/media/screenshots/preview.png)
+Here is a shot of the tower creation phase:
+
+![Screen shot of v0.4](https://raw.github.com/jamesshieh/abstraxion/master/media/screenshots/preview1.png)
+
+A shot of a maze and the game!
+
+![Screen shot of v0.4](https://raw.github.com/jamesshieh/abstraxion/master/media/screenshots/preview2.png)
 
 ### Dependencies
 
