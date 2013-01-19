@@ -16,7 +16,7 @@ module Abstraxion
       @spawns = 0
       @level = 1
       self.input = {  :escape => MapBuild,
-                      :m => MapBuild,
+                      :b => MapBuild,
                       :p => Pause,
                       :u => :toggle_hp
       }
@@ -36,7 +36,7 @@ module Abstraxion
       draw_map
       draw_map_obj
 
-      @controls = Chingu::Text.create(:text => "Press 'm' or 'esc' for building mode, 'p' to pause", :x => 100, :y => 615, :size => 30)
+      @controls = Chingu::Text.create(:text => "Press 'b' or 'esc' for building mode, 'p' to pause", :x => 100, :y => 615, :size => 30)
       @status = Chingu::Text.create(:text => "Gen Level: #{$generator.level}, Gen HP: #{$generator.hp}, Exp to Next: #{$generator.exp_left}, Connections Avail: #{$generator.connections.length}", :x => 100, :y => 666, :size => 20)
 
       super

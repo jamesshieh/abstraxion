@@ -7,7 +7,7 @@ module Abstraxion
       @cell_size = $node_size * 5
       @size = FACTOR * scale
       super
-      @selection ||= nil
+      @selection = $tower
 
       @sidebar_controls1 = Chingu::Text.create(:text => "Right click to select a tower", :x => 1000, :y => 10, :size => 15)
       @sidebar_controls2 = Chingu::Text.create(:text => "Left click to place", :x => 1000, :y => 25, :size => 15)
@@ -16,8 +16,8 @@ module Abstraxion
       @sidebar_label_tower1 = Chingu::Text.create(:text => "Tower 1", :x => 1050, :y => 80, :size => 15)
       @sidebar_label_tower2 = Chingu::Text.create(:text => "Tower 2", :x => 1050, :y => 180, :size => 15)
       @sidebar_label_tower3 = Chingu::Text.create(:text => "Tower 3", :x => 1050, :y => 280, :size => 15)
-      @sidebar_label_gen = Chingu::Text.create(:text => "Generator(req)", :x => 1040, :y => 380, :size => 15)
-      @sidebar_label_wall = Chingu::Text.create(:text => "Wall", :x => 1055, :y => 480, :size => 15)
+      @sidebar_label_gen = Chingu::Text.create(:text => "Wall", :x => 1055, :y => 380, :size => 15)
+      @sidebar_label_wall = Chingu::Text.create(:text => "Generator", :x => 1045, :y => 480, :size => 15)
       @controls = Chingu::Text.create(:text => "Press 't' to edit currently selected tower, 'm or esc' to resume play, 'p' to pause.", :x => 100, :y => 635, :size => 30)
       self.input = {  :escape => Play,
                       :m => Play,
@@ -35,6 +35,7 @@ module Abstraxion
       draw_map_obj
       draw_sidebar
       @cell = MapCellHover.create(:x => 0, :y => 0)
+      @selected = EditSelection.create(:x => 1075, :y => 125)
       super
     end
 
@@ -69,27 +70,32 @@ module Abstraxion
         if @mouse_y.between?(100, 150)
           $tower = $tower1
           @selection = $tower
-          EditSelection.destroy_all
-          EditSelection.create(:x => 1075, :y => 125)
         elsif @mouse_y.between?(200, 250)
           $tower = $tower2
           @selection = $tower
-          EditSelection.destroy_all
-          EditSelection.create(:x => 1075, :y => 225)
         elsif @mouse_y.between?(300, 350)
           $tower = $tower3
           @selection = $tower
-          EditSelection.destroy_all
-          EditSelection.create(:x => 1075, :y => 325)
         elsif @mouse_y.between?(400, 450)
-          @selection = MapAbxn::Wall.new
-          EditSelection.destroy_all
-          EditSelection.create(:x => 1075, :y => 425)
+          @selection = $wall
         elsif @mouse_y.between?(500, 550)
           @selection = $generator
-          EditSelection.destroy_all
-          EditSelection.create(:x => 1075, :y => 525)
         end
+      end
+    end
+
+    def update_selection
+      case @selection
+      when $tower1
+        @selected.x, @selected.y = 1075, 125
+      when $tower2
+        @selected.x, @selected.y = 1075, 225
+      when $tower3
+        @selected.x, @selected.y = 1075, 325
+      when $generator
+        @selected.x, @selected.y = 1075, 525
+      when $wall
+        @selected.x, @selected.y = 1075, 425
       end
     end
 
@@ -107,6 +113,7 @@ module Abstraxion
     end
 
     def update
+      update_selection
       @mouse_x = ($window.mouse_x / @cell_size).to_i * @cell_size + @cell_size / 2.0
       @mouse_y = ($window.mouse_y / @cell_size).to_i * @cell_size + @cell_size / 2.0
       @grid_x = @mouse_x.to_int/50
