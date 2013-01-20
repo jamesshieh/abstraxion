@@ -26,6 +26,22 @@ module TowerAbxn
       end
     end
 
+    def cost
+      cost = 0
+      grid_iterator.each do |node|
+        case node.type
+        when :amplifier
+          cost += 50
+        when :splitter
+          cost += 25
+        when :switcher
+          cost += 20
+        else
+        end
+      end
+      cost
+    end
+
     # Marshal dump function for saving to external function
     def marshal_dump
       [@x, @y, @originator, @grid, @current_id, @pulses]

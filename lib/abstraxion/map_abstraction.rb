@@ -116,6 +116,10 @@ module MapAbxn
       @grid = TowerAbxn::Grid.new(x, y)
     end
 
+    def cost
+      @grid.cost
+    end
+
     def marshal_load array
       @x, @y, @grid = array
     end

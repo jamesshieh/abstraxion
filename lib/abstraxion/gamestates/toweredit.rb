@@ -16,8 +16,10 @@ module Abstraxion
       scale = 1
       $node_size = NODE_SIZE.to_int * scale
       @size = FACTOR * scale
+      @cost = $tower.cost
       @controls1 = Chingu::Text.create(:text => "Press 't' or 'esc' to return to build mode", :x => 100, :y => 620, :size => 30)
       @controls2 = Chingu::Text.create(:text => "Left click to toggle a connection on or off, right click to change node type", :x => 100, :y => 655, :size => 20)
+      @cost_display = Chingu::Text.create(:text => "Current tower cost: #{@cost}", :x => 600, :y => 500, :size => 50)
       @tower_nodes1 = Chingu::Text.create(:text => "Node Types:", :x => 600, :y => 50, :size => 20, :color => @black)
       @tower_nodes2 = Chingu::Text.create(:text => "AM - Amplifies a pulse 20%", :x => 600, :y => 100, :size => 20,:color => @black)
       @tower_nodes3 = Chingu::Text.create(:text => "SW - Switches between outputs", :x => 600, :y => 150, :size => 20,:color => @black)
@@ -62,6 +64,7 @@ module Abstraxion
       end
       clear_towers
       draw_tower($tower, @tower_x, @tower_y, @size)
+      @cost = $tower.cost
     end
 
     # Draws a light blue indicator for mouse-over when drawing new connections
@@ -85,6 +88,7 @@ module Abstraxion
       @x_coord = ((@m_x + @tower_x)/$node_size).to_int
       @y_coord = ((@m_y + @tower_y)/$node_size).to_int
       draw_mouse_hover_connection
+      @cost_display.text = "Current tower cost: #{@cost}"
       $window.caption = "Tower Edit Mode. FPS #{$window.fps}"
     end
   end
