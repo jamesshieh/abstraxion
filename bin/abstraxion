@@ -42,6 +42,7 @@ class Game < Chingu::Window
     $tower5 = $game.tower5
     $tower = $tower1
     $wall = $game.wall
+    $money = $game.money
 
     # Start game state
     push_game_state(Menu)

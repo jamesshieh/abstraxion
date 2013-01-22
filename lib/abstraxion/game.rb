@@ -1,7 +1,7 @@
 module GameWrapper
   # Wrapper object for the entire game state
   class GameObj
-    attr_accessor :tower_cells, :generator, :map, :tower1, :tower2, :tower3, :tower4, :tower5, :wall
+    attr_accessor :tower_cells, :generator, :map, :tower1, :tower2, :tower3, :tower4, :tower5, :wall, :money
     def initialize
       @tower_cells = []
       @tower1 = MapAbxn::Tower.new(5, 5)
@@ -12,6 +12,7 @@ module GameWrapper
       @generator = MapAbxn::Generator.new
       @wall = MapAbxn::Wall.new
       @map = Map::Map.new
+      @money = 100
     end
 
     def add_tower(tower)
