@@ -101,6 +101,7 @@ module Abstraxion
       Mob.each do |mob|
         if !mob.alive?
           $generator.gain_exp(mob.level)
+          $money += mob.level
           mob.destroy
         end
       end
